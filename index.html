@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>护理到家 · 高保真原型</title>
+<style>
+  :root{--primary:#ff7a45;--primary2:#e8502a;--dark:#23262e;--text:#333;--muted:#6b7280;--border:#e5e7eb;--bg:#f5f6f8;--card:#fff;--green:#2bb3a3;--red:#dc2626;--blue:#4f83cc;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:-apple-system,"Microsoft YaHei","PingFang SC",sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.7;}
+  button{font-family:inherit;font-size:15px;cursor:pointer;}
+  input,select,textarea{font-family:inherit;font-size:15px;}
+  .grad{background:linear-gradient(135deg,#ff7a45,#e8502a);}
+  .btn{border:none;border-radius:24px;padding:12px 20px;font-weight:700;color:#fff;background:linear-gradient(135deg,#ff7a45,#e8502a);}
+  .btn.teal{background:linear-gradient(135deg,#33c3b3,#1f9c8d);}
+  .btn.line{background:#fff;color:var(--primary);border:1px solid var(--primary);}
+  .btn.teal-line{background:#fff;color:var(--green);border:1px solid var(--green);}
+  .btn.gray{background:#f3f4f6;color:var(--muted);border:1px solid var(--border);}
+  .btn:disabled{background:#e5e7eb;color:#9ca3af;cursor:not-allowed;}
+  .btn.sm{padding:6px 14px;font-size:14px;border-radius:8px;}
+  .btn.full{width:100%;}
+  .topbar{background:var(--dark);color:#fff;padding:11px 18px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:40;}
+  .topbar .brand{font-size:16px;font-weight:700;}
+  .topbar .brand span{color:var(--primary);}
+  .switch{display:flex;gap:8px;}
+  .switch button{background:transparent;color:#d1d5db;border:1px solid #4b5563;padding:6px 16px;border-radius:8px;font-size:14px;}
+  .switch button.active{background:var(--primary);color:#fff;border-color:var(--primary);font-weight:600;}
+  .phone{max-width:420px;margin:0 auto;min-height:calc(100vh - 54px);background:#fff;position:relative;padding-bottom:74px;}
+  .nav{display:flex;align-items:center;justify-content:center;position:relative;height:48px;border-bottom:1px solid var(--border);font-size:17px;font-weight:700;color:var(--dark);}
+  .nav .back{position:absolute;left:12px;color:var(--dark);font-size:22px;cursor:pointer;background:none;border:none;}
+  .phone .body{padding:14px 16px;}
+  .bottombar{position:fixed;bottom:0;left:0;right:0;max-width:420px;margin:0 auto;background:#fff;border-top:1px solid var(--border);padding:10px 16px;display:flex;gap:10px;z-index:30;}
+  .bottombar .btn{flex:1;}
+  .card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:12px;}
+  .row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid #f3f4f6;gap:12px;}
+  .row:last-child{border-bottom:none;}
+  .row .k{color:var(--muted);font-size:14px;flex:none;}
+  .row .v{color:var(--dark);font-weight:500;text-align:right;}
+  .tag{display:inline-block;padding:2px 10px;border-radius:999px;font-size:13px;}
+  .tag.orange{background:#fff7f2;color:var(--primary);}
+  .tag.green{background:#e6f7f5;color:var(--green);}
+  .tag.red{background:#fef2f2;color:var(--red);}
+  .tag.gray{background:#f3f4f6;color:var(--muted);}
+  .tag.blue{background:#eef6ff;color:var(--blue);}
+  .svc{display:flex;gap:12px;padding:12px;border:1px solid var(--border);border-radius:12px;margin-bottom:10px;align-items:center;cursor:pointer;}
+  .svc:hover{border-color:var(--primary);}
+  .svc .thumb{width:64px;height:64px;border-radius:10px;background:linear-gradient(135deg,#ffd9c7,#ffb08a);flex:none;}
+  .svc .t{font-size:16px;font-weight:700;color:var(--dark);}
+  .svc .d{font-size:13px;color:var(--muted);margin-top:2px;}
+  .svc .p{color:var(--primary);font-weight:700;margin-left:auto;white-space:nowrap;}
+  .flow{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:13px;color:#9a3412;}
+  .flow .step{background:#fff2e8;border-radius:8px;padding:5px 9px;}
+  .flow .arrow{color:var(--primary);}
+  .field{margin-bottom:11px;}
+  .field label{display:block;font-size:14px;color:var(--dark);margin-bottom:4px;font-weight:600;}
+  .field input,.field select,.field textarea{width:100%;border:1px solid var(--border);border-radius:10px;padding:10px 12px;}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .tabs{display:flex;gap:16px;border-bottom:1px solid var(--border);margin-bottom:12px;}
+  .tabs div{padding:8px 0;color:var(--muted);cursor:pointer;font-weight:600;}
+  .tabs div.active{color:var(--primary);border-bottom:2px solid var(--primary);}
+  .chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:10px;margin-bottom:6px;}
+  .chips .chip{padding:6px 14px;border-radius:999px;background:#f3f4f6;color:var(--muted);white-space:nowrap;cursor:pointer;font-size:14px;}
+  .chips .chip.active{background:#fff2e8;color:var(--primary);font-weight:600;}
+  .hero{background:linear-gradient(135deg,#ff7a45,#e8502a);color:#fff;border-radius:14px;padding:18px;margin-bottom:14px;}
+  .hero .big{font-size:22px;font-weight:800;line-height:1.4;}
+  .hero .sub{font-size:13px;color:#ffe3d5;margin-top:6px;}
+  .upload{width:74px;height:74px;border:1px dashed var(--border);border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:26px;background:#fafafa;}
+  .proof{width:74px;height:74px;border-radius:10px;background:linear-gradient(135deg,#eef2ff,#dbeafe);display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:12px;}
+  table{width:100%;border-collapse:collapse;}
+  th,td{border:1px solid var(--border);padding:8px 10px;text-align:center;font-size:13px;}
+  th{background:#fde8e0;color:var(--dark);font-weight:600;}
+  .timeline{display:flex;justify-content:space-between;margin:10px 0 4px;}
+  .timeline .node{flex:1;text-align:center;position:relative;}
+  .timeline .dot{width:26px;height:26px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;margin:0 auto 6px;font-size:14px;}
+  .timeline .lbl{font-size:13px;color:var(--dark);}
+  .timeline .tm{font-size:12px;color:var(--muted);}
+  /* ===== 弹窗（对齐设计：底部抽屉 / 居中卡片，右上角 X，居中标题，底部按钮） ===== */
+  .overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:flex-end;justify-content:center;z-index:100;}
+  .overlay.show{display:flex;}
+  .overlay.center{align-items:center;}
+  .sheet{background:#fff;border-radius:24px 24px 0 0;padding:22px 20px 26px;width:100%;max-width:420px;max-height:88vh;overflow-y:auto;position:relative;}
+  .dialog{background:#fff;border-radius:20px;padding:24px 22px;width:322px;max-width:88vw;position:relative;}
+  .sheet .head,.dialog .head{text-align:center;font-size:20px;font-weight:800;color:var(--dark);margin-bottom:18px;}
+  .x{position:absolute;top:18px;right:18px;width:28px;height:28px;border-radius:50%;background:#e5e7eb;color:#6b7280;border:none;font-size:15px;line-height:1;display:flex;align-items:center;justify-content:center;}
+  .foot{display:flex;gap:12px;margin-top:20px;}
+  .foot .btn{flex:1;}
+  .radio{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid #f3f4f6;cursor:pointer;}
+  .radio:last-child{border-bottom:none;}
+  .radio .dot{width:20px;height:20px;border-radius:50%;border:2px solid #d1d5db;flex:none;}
+  .radio.on .dot{border-color:var(--green);background:radial-gradient(circle,#fff 0 30%,var(--green) 32% 100%);}
+  .task-line{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #f3f4f6;}
+  .task-line:last-child{border-bottom:none;}
+  .task-line .name{font-weight:600;color:var(--dark);font-size:15px;}
+  .task-line .desc{font-size:13px;color:var(--muted);}
+  .ok{background:#e6f7f5;color:var(--green);border-radius:10px;padding:11px 14px;font-size:14px;margin:10px 0;}
+  .notice{background:#fff8f3;border:1px solid #fed7aa;border-radius:12px;padding:12px 14px;color:var(--primary);font-size:14px;margin-bottom:12px;}
+  .pwd{display:flex;gap:10px;justify-content:center;margin:16px 0;}
+  .pwd span{width:34px;height:34px;border:1px solid var(--border);border-radius:8px;background:#f3f4f6;}
+  .keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border-radius:12px;overflow:hidden;margin-top:6px;}
+  .keypad button{background:#fff;border:none;padding:15px;font-size:19px;color:var(--dark);}
+  .admin-main{padding:22px;}
+  .admin-main table th,.admin-main table td{text-align:left;font-size:14px;padding:10px 13px;border-color:var(--border);}
+  .admin-main table{border:1px solid var(--border);border-radius:8px;overflow:hidden;background:#fff;}
+  /* ===== 平台端（网页端）：居中模态弹窗 + 网页按钮，配色沿用平台端橙色 ===== */
+  .wmodal{background:#fff;border-radius:12px;width:520px;max-width:92vw;max-height:86vh;overflow:auto;box-shadow:0 12px 40px rgba(0,0,0,.18);}
+  .wm-head{padding:16px 20px;border-bottom:1px solid var(--border);font-size:16px;font-weight:700;color:var(--dark);display:flex;justify-content:space-between;align-items:center;}
+  .wm-x{border:none;background:none;font-size:15px;color:var(--muted);cursor:pointer;line-height:1;}
+  .wm-body{padding:20px;}
+  .wm-foot{padding:14px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px;}
+  .wbtn{border:none;border-radius:8px;padding:9px 18px;font-size:14px;font-weight:600;cursor:pointer;background:linear-gradient(135deg,#ff7a45,#e8502a);color:#fff;}
+  .wbtn.line{background:#fff;color:var(--dark);border:1px solid var(--border);}
+  .wbtn.sm{padding:6px 14px;font-size:13px;border-radius:6px;}
+  .wfield{margin-bottom:14px;}
+  .wfield label{display:block;font-size:14px;color:var(--dark);margin-bottom:6px;font-weight:600;}
+  .wfield input,.wfield select,.wfield textarea{width:100%;border:1px solid var(--border);border-radius:8px;padding:9px 12px;}
+  .wrow{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #f3f4f6;font-size:14px;}
+  .wrow:last-child{border-bottom:none;}
+  .wrow .k{color:var(--muted);}
+  .wrow .v{color:var(--dark);font-weight:500;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">护理到家 <span>· 高保真原型</span></div>
+  <div class="switch">
+    <button id="e-user" class="active" onclick="setEnd('user')">用户端</button>
+    <button id="e-nurse" onclick="setEnd('nurse')">护理端</button>
+    <button id="e-admin" onclick="setEnd('admin')">平台端</button>
+  </div>
+</div>
+
+<div id="app"></div>
+<div class="overlay" id="ov"></div>
+
+<script>
+// ============ 统一假数据（虚构，不含真实人名与地址） ============
+const MOCK = {
+  patient:'陈美娟', patientMeta:'女 ｜ 68 岁',
+  phone:'138 0000 0000',
+  addr:'苏州市示例区示范路 18 号 阳光家园 2 栋 601',
+  org:'苏康养示范护理院',
+  nurse:'林晓静', nurseTitle:'高级护理员 · 从业 5 年',
+};
+
+const S = {
+  end:'user', user:null, page:'login', filter:'全部', orderTab:'服务订单', cancelReason:'',
+  orders:[
+    { id:1, no:'8800000001', svc:'上门打针', price:99, transport:30, status:'待确认',
+      patient:MOCK.patient, phone:MOCK.phone, addr:MOCK.addr, time:'2025-10-10 14:00-15:00',
+      note:'按医嘱上门注射，不提供药品。', caregiver:'', site:MOCK.org,
+      createTime:'2025-08-08 10:30:56', payTime:'2025-08-08 10:30:56', payMethod:'微信支付',
+      checkin:'', checkout:'', tasks:{identity:false,diagnosis:false,assess:false,record:false}, assess:null, record:null },
+    { id:2, no:'8800000002', svc:'留置更换胃管', price:89, transport:30, status:'待服务',
+      patient:MOCK.patient, phone:MOCK.phone, addr:MOCK.addr, time:'2025-10-12 10:00-11:00',
+      note:'', caregiver:MOCK.nurse, caregiverTitle:MOCK.nurseTitle, site:MOCK.org,
+      createTime:'2025-08-08 10:30:56', payTime:'2025-08-08 10:31:05', payMethod:'微信支付',
+      checkin:'', checkout:'', tasks:{identity:false,diagnosis:false,assess:false,record:false}, assess:null, record:null },
+    { id:3, no:'8800000003', svc:'伤口护理', price:99, transport:30, status:'已完成',
+      patient:MOCK.patient, phone:MOCK.phone, addr:MOCK.addr, time:'2025-10-08 10:00-11:00',
+      note:'', caregiver:MOCK.nurse, caregiverTitle:MOCK.nurseTitle, site:MOCK.org,
+      createTime:'2025-10-05 09:00:00', payTime:'2025-10-05 09:01:00', payMethod:'微信支付',
+      checkin:'10:02', checkout:'10:58', tasks:{identity:true,diagnosis:true,assess:true,record:true}, assess:{}, record:{content:'伤口换药完成，愈合正常'} },
+    { id:4, no:'8800000004', svc:'PICC 导管维护', price:150, transport:30, status:'退款中',
+      patient:MOCK.patient, phone:MOCK.phone, addr:MOCK.addr, time:'2025-10-13 09:00-10:00',
+      note:'', caregiver:'', site:MOCK.org,
+      createTime:'2025-10-06 09:00:00', payTime:'2025-10-06 09:01:00', payMethod:'微信支付',
+      checkin:'', checkout:'', tasks:{identity:false,diagnosis:false,assess:false,record:false}, assess:null, record:null },
+  ],
+  services:[
+    {name:'上门打针', price:99, desc:'专业护士上门为有需要打针的患者提供服务，不提供药品'},
+    {name:'PICC 导管维护', price:150, desc:'导管维护、冲管、换敷料'},
+    {name:'留置更换胃管', price:129, desc:'专业护士上门更换留置胃管'},
+    {name:'伤口护理', price:99, desc:'伤口换药、清创、观察愈合'},
+    {name:'肌肉注射', price:80, desc:'按医嘱肌肉注射，不提供药品'},
+  ],
+  reasons:['用户计划有变，不需要了','用户预约信息填写错','用户服务项目变化','用户身体状况不佳','用户不在家','平台派单错误','护士临时有事无法服务','极端天气','护士身体状况不佳','其他原因'],
+};
+const $ = id => document.getElementById(id);
+const app = () => $('app');
+const ov = () => $('ov');
+const order = () => S.orders.find(o=>o.id===S.cur);
+function tag(st){const m={'待支付':'orange','待确认':'blue','待服务':'orange','已完成':'green','已取消':'gray','退款中':'red','已退款':'gray'};return `<span class="tag ${m[st]||'gray'}">${st}</span>`;}
+function closeOv(){ ov().className='overlay'; }
+function sheet(title, body, foot){
+  ov().innerHTML = `<div class="sheet"><button class="x" onclick="closeOv()">✕</button><div class="head">${title}</div>${body}<div class="foot">${foot}</div></div>`;
+  ov().className='overlay show';
+}
+function dialog(title, body, foot){
+  ov().innerHTML = `<div class="dialog"><button class="x" onclick="closeOv()">✕</button><div class="head">${title}</div>${body}<div class="foot">${foot}</div></div>`;
+  ov().className='overlay show center';
+}
+function webModal(title, body, foot){
+  ov().innerHTML = `<div class="wmodal"><div class="wm-head"><span>${title}</span><button class="wm-x" onclick="closeOv()">✕</button></div><div class="wm-body">${body}</div><div class="wm-foot">${foot}</div></div>`;
+  ov().className='overlay show center';
+}
+
+function setEnd(e){
+  S.end=e;
+  S.page = e==='user' ? (S.user?'home':'login') : (e==='nurse'?'nurseList':'adminOrders');
+  ['user','nurse','admin'].forEach(x=>$('e-'+x).classList.toggle('active',x===e));
+  render();
+}
+function render(){
+  if(S.end==='user') return renderUser();
+  if(S.end==='nurse') return renderNurse();
+  return renderAdmin();
+}
+
+// ================= 用户端 =================
+function renderUser(){
+  if(S.page==='login'){
+    app().innerHTML=`<div class="phone">
+      <div class="grad" style="padding:46px 24px 64px;color:#fff;text-align:center;">
+        <div style="width:70px;height:70px;border-radius:50%;background:rgba(255,255,255,.25);margin:0 auto 14px;display:flex;align-items:center;justify-content:center;font-size:34px;">✚</div>
+        <div style="font-size:18px;">您好，欢迎使用护理到家！</div>
+      </div>
+      <div style="background:#fff;border-radius:16px;margin:-36px 16px 0;padding:22px;box-shadow:0 6px 20px rgba(0,0,0,.08);">
+        <div style="font-size:22px;font-weight:800;color:var(--dark);margin-bottom:16px;">验证码登录</div>
+        <div class="field"><label>手机号</label><input id="lg-phone" value="${MOCK.phone}"></div>
+        <div class="field"><label>验证码</label><div style="display:flex;gap:8px;"><input id="lg-code" placeholder="请输入验证码" style="flex:1;background:#f9fafb;"><button class="btn sm" style="background:#fff2e8;color:var(--primary);border-radius:10px;" onclick="alert('验证码已发送（演示：1234）')">获取验证码</button></div></div>
+        <button class="btn full" style="margin-top:6px;" onclick="userLogin()">登录</button>
+      </div>
+      <div style="text-align:center;color:var(--muted);font-size:13px;margin-top:20px;">苏康养 · 专业护理走进千万家</div>
+    </div>`;
+  }
+  else if(S.page==='home'){
+    app().innerHTML=`<div class="phone"><div class="nav">护理到家</div>
+      <div class="body">
+        <div class="hero"><div class="big">苏康养<br>让专业护理走进千万家</div><div class="sub">示例护理机构提供服务</div></div>
+        <div class="card"><div style="font-weight:700;color:var(--dark);margin-bottom:10px;">服务流程</div>
+          <div class="flow"><span class="step">① 预约服务</span><span class="arrow">→</span><span class="step">② 填写信息</span><span class="arrow">→</span><span class="step">③ 完成支付</span><span class="arrow">→</span><span class="step">④ 平台确认</span><span class="arrow">→</span><span class="step">⑤ 护士上门</span><span class="arrow">→</span><span class="step">⑥ 服务完成</span></div>
+        </div>
+        <div style="font-weight:700;color:var(--dark);margin:6px 0 10px;">服务项目</div>
+        ${S.services.map((s,i)=>`<div class="svc" onclick="pickService(${i})"><div class="thumb"></div><div><div class="t">${s.name}</div><div class="d">${s.desc}</div></div><div class="p">¥${s.price}<span style="font-size:12px;color:var(--muted);"> 起/次</span></div></div>`).join('')}
+      </div>
+      <div class="bottombar"><button class="btn line" style="flex:0 0 76px;" onclick="S.page='profile';render()">我的</button><button class="btn" onclick="pickService(0)">预约服务</button></div>
+    </div>`;
+  }
+  else if(S.page==='booking'){
+    const s=S.draft;
+    app().innerHTML=`<div class="phone"><div class="nav"><button class="back" onclick="S.page='home';render()">‹</button>预约结算</div>
+      <div class="body">
+        <div class="card">
+          <div class="row"><span class="k">服务项目</span><span class="v">${s.name} <span style="color:var(--primary);">¥${s.price}</span></span></div>
+          <div class="field" style="margin-top:10px;"><label>服务对象</label><input id="bk-patient" value="${MOCK.patient}"></div>
+          <div class="field"><label>联系电话</label><input id="bk-phone" value="${MOCK.phone}"></div>
+          <div class="field"><label>服务地址</label><input id="bk-addr" value="${MOCK.addr}"></div>
+          <div class="field"><label>预约时间</label><select id="bk-time"><option>2025-10-13 14:00-15:00</option><option>2025-10-13 15:00-16:00</option><option>2025-10-14 09:00-10:00</option></select></div>
+          <div class="field"><label>备注</label><textarea id="bk-note" placeholder="补充说明（可选）"></textarea></div>
+        </div>
+        <div class="card"><div class="row"><span class="k">服务费用</span><span class="v">¥${s.price}.00</span></div><div class="row"><span class="k">交通费用</span><span class="v">¥30.00</span></div><div class="row"><span class="k">合计</span><span class="v" style="color:var(--primary);font-size:18px;">¥${s.price+30}.00</span></div></div>
+      </div>
+      <div class="bottombar"><button class="btn" onclick="submitBooking()">提交订单</button></div>
+    </div>`;
+  }
+  else if(S.page==='payResult'){
+    app().innerHTML=`<div class="phone"><div class="nav">支付结果</div>
+      <div class="body" style="text-align:center;padding-top:56px;">
+        <div style="width:78px;height:78px;border-radius:50%;background:#e6f7f5;color:var(--green);display:flex;align-items:center;justify-content:center;font-size:42px;margin:0 auto 16px;">✓</div>
+        <div style="font-size:20px;font-weight:800;color:var(--dark);">支付成功</div>
+        <div style="color:var(--muted);margin-top:6px;">订单已提交，等待平台确认派单</div>
+        <button class="btn full" style="margin-top:28px;" onclick="S.page='profile';render()">查看订单</button>
+      </div>
+    </div>`;
+  }
+  else if(S.page==='profile'){
+    const isSupplies = S.orderTab==='耗材订单';
+    const list = isSupplies ? [] : S.orders.filter(o=>S.filter==='全部'||o.status===S.filter);
+    app().innerHTML=`<div class="phone"><div class="nav">个人中心</div>
+      <div class="body">
+        <div class="tabs"><div class="${isSupplies?'':'active'}" onclick="S.orderTab='服务订单';render()">服务订单</div><div class="${isSupplies?'active':''}" onclick="S.orderTab='耗材订单';render()">耗材订单</div></div>
+        ${isSupplies?'<div class="card" style="text-align:center;color:var(--muted);padding:40px 0;">暂无耗材订单</div>':`
+        <div class="chips">${['全部','待支付','待确认','待服务','已完成'].map(f=>`<div class="chip ${S.filter===f?'active':''}" onclick="S.filter='${f}';render()">${f}</div>`).join('')}</div>
+        ${list.map(o=>`<div class="card" style="cursor:pointer;" onclick="S.cur=${o.id};S.page='orderDetail';render()">
+          <div class="row" style="padding:0 0 8px;"><span style="color:var(--muted);font-size:13px;">${o.site}</span>${tag(o.status)}</div>
+          <div class="svc" style="border:none;padding:0;"><div class="thumb"></div><div><div class="t">${o.svc}</div><div class="d" style="color:var(--primary);font-weight:700;">¥${o.price}.00</div></div><div class="p" style="color:var(--muted);font-weight:400;">x1 次</div></div>
+          <div class="row" style="padding:8px 0 0;color:var(--muted);font-size:13px;"><span>${o.createTime.slice(0,10)}</span><span>共 1 件　应付：<b style="color:var(--dark);">¥${o.price+o.transport}.00</b></span></div>
+        </div>`).join('')||'<div class="card" style="text-align:center;color:var(--muted);">该状态暂无订单</div>'}`}
+      </div>
+    </div>`;
+  }
+  else if(S.page==='orderDetail'){ renderOrderDetail(); }
+  else if(S.page==='serviceDetail'){ renderServiceDetail('user'); }
+  else if(S.page==='refundDetail'){ renderRefundDetail(); }
+}
+
+function userLogin(){ if(!$('lg-phone').value.trim()){alert('请输入手机号');return;} S.user=true; S.page='home'; render(); }
+function pickService(i){ S.draft=JSON.parse(JSON.stringify(S.services[i])); S.page='booking'; render(); }
+function submitBooking(){
+  S.draft.patient=$('bk-patient').value; S.draft.phone=$('bk-phone').value; S.draft.addr=$('bk-addr').value; S.draft.time=$('bk-time').value; S.draft.note=$('bk-note').value;
+  const amt=S.draft.price+30;
+  pwd=[];
+  sheet('请输入支付密码',
+    `<div style="text-align:center;color:var(--muted);font-size:14px;">苏康养商户</div>
+     <div style="text-align:center;font-size:32px;font-weight:800;color:var(--dark);margin:8px 0 4px;">¥ ${amt}.00</div>
+     <div class="row" style="border:none;"><span class="k">支付方式</span><span class="v">🪙 零钱 ›</span></div>
+     <div class="pwd" id="pwd-box">${Array.from({length:6}).map(()=>'<span></span>').join('')}</div>
+     <div style="text-align:center;color:var(--muted);font-size:12px;margin-bottom:8px;">演示：任意 6 位密码均可支付成功</div>
+     <div class="keypad">${[1,2,3,4,5,6,7,8,9].map(n=>`<button onclick="payKey('${n}')">${n}</button>`).join('')}<button style="background:#f9fafb;"></button><button onclick="payKey('0')">0</button><button onclick="pwdBack()">⌫</button></div>`,
+    '');
+}
+let pwd=[];
+function payKey(n){ if(pwd.length>=6) return; pwd.push(n); drawPwd(); if(pwd.length>=6){ setTimeout(()=>{ closeOv(); doPay(); }, 350); } }
+function pwdBack(){ pwd.pop(); drawPwd(); }
+function drawPwd(){
+  const box=$('pwd-box'); if(!box) return;
+  [].forEach.call(box.children,(s,i)=>{ s.textContent = i<pwd.length?'●':''; s.style.display='flex'; s.style.alignItems='center'; s.style.justifyContent='center'; s.style.color='#23262e'; s.style.fontSize='20px'; });
+}
+function doPay(){
+  const s=S.draft;
+  S.orders.unshift({ id:Date.now(), no:'88'+Date.now().toString().slice(-8), svc:s.name, price:s.price, transport:30, status:'待确认',
+    patient:s.patient, phone:s.phone, addr:s.addr, time:s.time, note:s.note, caregiver:'', site:MOCK.org,
+    createTime:new Date().toLocaleString('zh-CN'), payTime:new Date().toLocaleString('zh-CN'), payMethod:'零钱',
+    checkin:'', checkout:'', tasks:{identity:false,diagnosis:false,assess:false,record:false}, assess:null, record:null });
+  S.page='payResult'; render();
+}
+function renderOrderDetail(){
+  const o=order();
+  const canCancel = o.status==='待支付'||o.status==='待确认'||o.status==='待服务';
+  app().innerHTML=`<div class="phone"><div class="nav"><button class="back" onclick="S.page='profile';render()">‹</button>订单详情</div>
+    <div class="body">
+      <div class="card">${tag(o.status)}</div>
+      <div class="card">
+        <div style="color:var(--muted);font-size:13px;margin-bottom:8px;">${o.site}</div>
+        <div class="svc" style="border:none;padding:0;"><div class="thumb"></div><div><div class="t">${o.svc}</div><div class="d" style="color:var(--primary);font-weight:700;">¥${o.price}.00</div></div><div class="p" style="color:var(--muted);font-weight:400;">x1 次</div></div>
+        <div class="row" style="margin-top:8px;"><span class="k">服务费用</span><span class="v">¥${o.price}.00</span></div>
+        <div class="row"><span class="k">交通费用</span><span class="v">¥${o.transport}.00</span></div>
+        <div class="row"><span class="k">合计</span><span class="v" style="color:var(--primary);font-size:17px;">¥${o.price+o.transport}.00</span></div>
+      </div>
+      <div class="card">
+        <div class="row"><span class="k">服务对象</span><span class="v">${o.patient} ｜ ${MOCK.patientMeta}</span></div>
+        <div class="row"><span class="k">联系电话</span><span class="v">${o.phone}</span></div>
+        <div class="row"><span class="k">预约时间</span><span class="v">${o.time}</span></div>
+        <div class="row"><span class="k">服务地址</span><span class="v">${o.addr}</span></div>
+        <div class="row"><span class="k">备注说明</span><span class="v">${o.note||'—'}</span></div>
+      </div>
+      <div class="card">
+        <div class="row"><span class="k">订单编号</span><span class="v">${o.no}</span></div>
+        <div class="row"><span class="k">下单时间</span><span class="v">${o.createTime}</span></div>
+        <div class="row"><span class="k">支付方式</span><span class="v">${o.payMethod}</span></div>
+      </div>
+      <button class="btn line full" style="margin-bottom:10px;" onclick="S.cur=${o.id};S.page='serviceDetail';render()">查看服务详情</button>
+      ${o.status==='退款中'||o.status==='已退款'?`<button class="btn line full" onclick="S.cur=${o.id};S.page='refundDetail';render()">查看退款详情</button>`:''}
+      ${canCancel?`<button class="btn gray full" style="margin-top:10px;" onclick="S.cur=${o.id};openCancel()">取消预约</button>`:''}
+    </div>
+  </div>`;
+}
+function renderServiceDetail(role){
+  const o=order();
+  const proofs = 5;
+  app().innerHTML=`<div class="phone"><div class="nav"><button class="back" onclick="S.page='${role==='user'?'orderDetail':'nurseDetail'}';render()">‹</button>服务详情</div>
+    <div class="body">
+      <div class="notice">🔔 ${o.status==='已完成'?'服务已完成':'距服务开始：2 天 3 小时 24 分'}</div>
+      <div class="card">
+        <div class="svc" style="border:none;padding:0;"><div class="thumb"></div><div><div class="t">${o.svc}</div><div class="d" style="color:var(--primary);font-weight:700;">¥${o.price}.00</div></div><div class="p">${tag(o.status)}</div></div>
+        <div class="row" style="margin-top:6px;"><span class="k">订单编号</span><span class="v">${o.no}</span></div>
+        <div class="row"><span class="k">服务对象</span><span class="v">${o.patient} ｜ ${MOCK.patientMeta} <span class="tag green" style="margin-left:6px;">联系</span></span></div>
+        <div class="row"><span class="k">服务地址</span><span class="v">${o.addr}</span></div>
+        <div class="row"><span class="k">预约时间</span><span class="v">${o.time}</span></div>
+        <div class="row"><span class="k">备注</span><span class="v">${o.note||'—'}</span></div>
+      </div>
+      <div class="card">
+        <div style="font-weight:700;color:var(--dark);margin-bottom:10px;">就医证明（${proofs}）</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;">
+          ${Array.from({length:proofs}).map(()=>`<div class="proof" style="width:100%;height:80px;">就医证明</div>`).join('')}
+        </div>
+      </div>
+      <div class="card">
+        <div style="font-weight:700;color:var(--dark);margin-bottom:6px;">代办事项</div>
+        ${taskLine('身份确认','患者信息确认，服务内容、时间地点确认风险告知',o.tasks.identity)}
+        ${taskLine('就医证明确认','医嘱信息核对',o.tasks.diagnosis)}
+        ${taskLine('现场评估','评估服务对象是否符合操作护理条件',o.tasks.assess)}
+        ${taskLine('护理记录','拍照和记录操作结果',o.tasks.record)}
+      </div>
+      <div class="card">
+        <div class="row"><span class="k">开始时间</span><span class="v">${o.checkin?o.time.split(' ')[0]+' '+o.checkin:'待打卡'}</span></div>
+        <div class="row"><span class="k">结束时间</span><span class="v">${o.checkout?o.time.split(' ')[0]+' '+o.checkout:'待打卡'}</span></div>
+      </div>
+    </div>
+  </div>`;
+}
+function taskLine(name,desc,done){
+  return `<div class="task-line"><div><div class="name">${name}</div><div class="desc">${desc}</div></div>${done?'<span class="tag green">已完成</span>':'<span class="tag gray">待完成</span>'}</div>`;
+}
+function openCancel(){
+  const o=order(); const refund=o.price-0.3*o.price+o.transport;
+  sheet('取消预约',
+    `<div class="row" style="cursor:pointer;" onclick="openReason()"><span class="k" style="color:var(--red);">*取消原因</span><span class="v" id="cancel-reason-txt" style="color:var(--muted);">${S.cancelReason||'请选择'} ›</span></div>
+     <div class="row" style="border:none;"><span class="k" style="font-weight:700;color:var(--dark);">退款金额：</span><span class="v" style="color:var(--primary);font-size:20px;font-weight:800;">¥ ${(o.price+o.transport).toFixed(2)}</span></div>
+     <div class="row"><span class="k">服务费用</span><span class="v">¥${o.price}.00</span></div>
+     <div class="row"><span class="k" style="padding-left:12px;">服务费扣款</span><span class="v" style="color:var(--muted);">- ¥0.00</span></div>
+     <div class="row"><span class="k">交通费用</span><span class="v">¥${o.transport}.00</span></div>
+     <div class="row"><span class="k" style="padding-left:12px;">交通费扣款</span><span class="v" style="color:var(--muted);">- ¥0.00</span></div>
+     <div style="font-weight:700;color:var(--dark);margin:12px 0 8px;">退款规则：</div>
+     <table><tr><th>用户取消订单</th><th>扣费规则</th></tr>
+       <tr><td>预约时间前一天</td><td>不扣费</td></tr>
+       <tr><td>距离订单开始时间 ≥2 小时</td><td>不扣费</td></tr>
+       <tr><td>距离订单开始时间 ≤2 小时</td><td>扣服务费的 30%</td></tr>
+       <tr><td>护士已上门</td><td>扣服务费的 50% + 交通费</td></tr></table>`,
+    `<button class="btn line" onclick="closeOv()">再想想</button><button class="btn" onclick="confirmCancel()">确认</button>`);
+}
+function openReason(){
+  sheet('取消原因',
+    S.reasons.map(r=>`<div class="radio ${S.cancelReason===r?'on':''}" onclick="pickReason('${r}')"><div class="dot"></div><div>${r}</div></div>`).join(''),
+    `<button class="btn teal full" onclick="closeOv();openCancel()">提交</button>`);
+}
+function pickReason(r){ S.cancelReason=r; openReason(); }
+function confirmCancel(){
+  if(!S.cancelReason){ alert('请选择取消原因'); return; }
+  const o=order(); o.status='退款中'; closeOv(); S.page='refundDetail'; render();
+}
+function renderRefundDetail(){
+  const o=order(); const t=new Date().toLocaleString('zh-CN');
+  app().innerHTML=`<div class="phone"><div class="nav"><button class="back" onclick="S.page='orderDetail';render()">‹</button>退款详情</div>
+    <div class="body">
+      <div class="card"><div class="row" style="border:none;"><span style="color:var(--primary);font-weight:700;">⊙ 退款成功</span><span style="color:var(--muted);font-size:13px;">已成功退款至您的微信</span></div></div>
+      <div class="card">
+        <div class="row" style="border:none;"><span class="k" style="font-weight:700;color:var(--dark);">退款金额：</span><span class="v" style="color:var(--primary);font-size:20px;font-weight:800;">¥ ${o.price+o.transport}.00 ›</span></div>
+        <div class="timeline">
+          <div class="node"><div class="dot">✓</div><div class="lbl">退款申请</div><div class="tm">${t}</div></div>
+          <div class="node"><div class="dot">✓</div><div class="lbl">平台处理</div><div class="tm">${t}</div></div>
+          <div class="node"><div class="dot">✓</div><div class="lbl">退款成功</div><div class="tm">${t}</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div style="color:var(--muted);font-size:13px;margin-bottom:8px;">${o.site}</div>
+        <div class="svc" style="border:none;padding:0;"><div class="thumb"></div><div><div class="t">${o.svc}</div><div class="d" style="color:var(--primary);font-weight:700;">¥${o.price}.00</div></div><div class="p" style="color:var(--muted);font-weight:400;">x1 次</div></div>
+        <div class="row" style="margin-top:8px;"><span class="k">服务费用</span><span class="v">¥${o.price}.00</span></div>
+        <div class="row"><span class="k">交通费用</span><span class="v">¥${o.transport}.00</span></div>
+        <div class="row"><span class="k">合计</span><span class="v" style="color:var(--primary);font-size:17px;">¥${o.price+o.transport}.00</span></div>
+      </div>
+      <div class="card">
+        <div class="row"><span class="k">服务对象</span><span class="v">${o.patient} ｜ ${MOCK.patientMeta}</span></div>
+        <div class="row"><span class="k">联系电话</span><span class="v">${o.phone}</span></div>
+        <div class="row"><span class="k">预约时间</span><span class="v">${o.time}</span></div>
+        <div class="row"><span class="k">服务地址</span><span class="v">${o.addr}</span></div>
+      </div>
+      <div class="card">
+        <div class="row"><span class="k">订单编号</span><span class="v">${o.no}</span></div>
+        <div class="row"><span class="k">下单时间</span><span class="v">${o.createTime}</span></div>
+        <div class="row"><span class="k">支付方式</span><span class="v">${o.payMethod}</span></div>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ================= 护理端 =================
+function renderNurse(){
+  if(S.page==='nurseList'){
+    const list=S.orders.filter(o=>o.status==='待服务'||o.status==='已完成');
+    app().innerHTML=`<div class="phone"><div class="nav">我的服务单</div>
+      <div class="body">
+        <div class="card" style="background:#e6f7f5;border:none;color:var(--green);">护理员：${MOCK.nurse} · 今日 ${S.orders.filter(o=>o.status==='待服务').length} 单待服务</div>
+        ${list.map(o=>`<div class="card" style="cursor:pointer;" onclick="S.cur=${o.id};S.page='nurseDetail';render()">
+          <div class="row" style="padding:0 0 8px;"><span style="color:var(--muted);font-size:13px;">${o.time}</span>${tag(o.status)}</div>
+          <div style="font-size:16px;font-weight:700;color:var(--dark);">${o.svc}</div>
+          <div style="color:var(--muted);font-size:13px;margin-top:2px;">${o.patient} · ${o.addr}</div>
+        </div>`).join('')||'<div class="card" style="text-align:center;color:var(--muted);">暂无服务单</div>'}
+      </div>
+    </div>`;
+  }
+  else if(S.page==='nurseDetail'){ renderNurseDetail(); }
+  else if(S.page==='assess'){ renderAssess(); }
+  else if(S.page==='record'){ renderRecord(); }
+}
+function renderNurseDetail(){
+  const o=order(); const started=!!o.checkin, done=o.status==='已完成';
+  app().innerHTML=`<div class="phone"><div class="nav"><button class="back" onclick="S.page='nurseList';render()">‹</button>服务详情</div>
+    <div class="body">
+      <div class="notice">🔔 ${done?'服务已完成':'距服务开始：2 天 3 小时 24 分'}</div>
+      <div class="card">
+        <div class="svc" style="border:none;padding:0;"><div class="thumb"></div><div><div class="t">${o.svc}</div><div class="d" style="color:var(--primary);font-weight:700;">¥${o.price}.00</div></div><div class="p">${tag(o.status)}</div></div>
+        <div class="row" style="margin-top:6px;"><span class="k">服务对象</span><span class="v">${o.patient} ｜ ${MOCK.patientMeta}</span></div>
+        <div class="row"><span class="k">服务地址</span><span class="v">${o.addr}</span></div>
+        <div class="row"><span class="k">预约时间</span><span class="v">${o.time}</span></div>
+      </div>
+      <div class="card">
+        <div style="font-weight:700;color:var(--dark);margin-bottom:6px;">代办事项</div>
+        ${nurseTask('身份确认','患者信息确认',o.tasks.identity,'identity')}
+        ${nurseTask('就医证明确认','医嘱信息核对',o.tasks.diagnosis,'diagnosis')}
+        <div class="task-line"><div><div class="name">现场评估</div><div class="desc">评估服务对象是否符合操作条件</div></div>${o.tasks.assess?'<span class="tag green">已完成</span>':`<button class="btn teal sm" onclick="S.page='assess';render()">去完成</button>`}</div>
+        <div class="task-line"><div><div class="name">护理记录</div><div class="desc">拍照和记录操作结果</div></div>${o.tasks.record?'<span class="tag green">已完成</span>':`<button class="btn teal sm" ${o.tasks.assess?'':'disabled'} onclick="S.page='record';render()">去完成</button>`}</div>
+      </div>
+      <div class="card">
+        <div class="row"><span class="k">开始时间</span><span class="v">${o.checkin?o.time.split(' ')[0]+' '+o.checkin:'待打卡'}</span></div>
+        <div class="row"><span class="k">结束时间</span><span class="v">${o.checkout?o.time.split(' ')[0]+' '+o.checkout:'待打卡'}</span></div>
+      </div>
+    </div>
+    <div class="bottombar">
+      ${done?'<button class="btn gray full" disabled>服务已完成</button>'
+        : !started?'<button class="btn line" style="flex:0 0 110px;" onclick="openCancel()">取消服务</button><button class="btn teal" onclick="earlyCheck()">签到开始服务</button>'
+        : '<button class="btn teal full" onclick="nurseCheckout()">完成服务</button>'}
+    </div>
+  </div>`;
+}
+function nurseTask(name,desc,done,key){
+  return `<div class="task-line"><div><div class="name">${name}</div><div class="desc">${desc}</div></div>${done?'<span class="tag green">已完成</span>':`<button class="btn teal sm" onclick="toggleTask('${key}')">去完成</button>`}</div>`;
+}
+function toggleTask(key){ order().tasks[key]=true; render(); }
+function earlyCheck(){
+  dialog('提示','<div style="text-align:center;color:var(--muted);">当前订单未到服务时间，是否继续打卡？</div>',
+    '<button class="btn line" onclick="closeOv()">取消</button><button class="btn teal" onclick="closeOv();nurseCheckin()">确认</button>');
+}
+function nurseCheckin(){
+  const o=order(); o.checkin='14:29';
+  const body=`<div style="display:flex;gap:10px;margin-bottom:16px;">
+      <div style="flex:1;background:#f9fafb;border-radius:12px;padding:12px;"><div style="font-size:13px;color:var(--muted);">开始打卡</div><div style="color:var(--green);font-weight:700;">✓ 14:29 已打卡</div></div>
+      <div style="flex:1;background:#f9fafb;border-radius:12px;padding:12px;"><div style="font-size:13px;color:var(--muted);">完成打卡</div><div style="color:var(--muted);">未打卡</div></div></div>
+    <div style="text-align:center;"><div style="width:78px;height:78px;border-radius:50%;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;font-size:40px;margin:0 auto 12px;">✓</div>
+    <div style="font-weight:800;color:var(--dark);">开始打卡成功！</div>
+    <div style="color:var(--red);font-size:13px;margin-top:8px;text-align:left;">地址异常：${o.addr}</div></div>`;
+  sheet('开始服务', body, '<button class="btn teal full" onclick="closeOv();S.page=\'assess\';render()">去现场评估</button>');
+  render();
+}
+function renderAssess(){
+  const o=order();
+  app().innerHTML=`<div class="phone"><div class="nav"><button class="back" onclick="S.page='nurseDetail';render()">‹</button>现场评估</div>
+    <div class="body"><div class="card">
+      <div class="field"><label>服务对象</label><input value="${o.patient} ｜ ${MOCK.patientMeta}" disabled></div>
+      <div class="field"><label>服务项目</label><input value="${o.svc}" disabled></div>
+      <div class="field"><label>是否符合操作条件</label><select id="as-ok"><option>符合</option><option>不符合（需说明）</option></select></div>
+      <div class="field"><label>老人精神状态</label><select id="as-mind"><option>良好</option><option>一般</option><option>较差</option></select></div>
+      <div class="field"><label>生命体征（血压 / 心率）</label><div class="grid2"><input id="as-bp" placeholder="130/80"><input id="as-hr" placeholder="72"></div></div>
+      <div class="field"><label>皮肤 / 伤口情况</label><select id="as-skin"><option>正常</option><option>压疮</option><option>破损</option></select></div>
+      <div class="field"><label>环境安全</label><select id="as-env"><option>安全</option><option>有隐患</option></select></div>
+      <button class="btn teal full" onclick="saveAssess()">提交评估</button>
+    </div></div>
+  </div>`;
+}
+function saveAssess(){
+  const o=order();
+  o.assess={ok:$('as-ok').value,mind:$('as-mind').value,bp:$('as-bp').value,hr:$('as-hr').value,skin:$('as-skin').value,env:$('as-env').value};
+  o.tasks.assess=true; S.page='nurseDetail';
+  sheet('现场评估已提交','<div style="text-align:center;"><div style="width:70px;height:70px;border-radius:50%;background:#e6f7f5;color:var(--green);display:flex;align-items:center;justify-content:center;font-size:36px;margin:0 auto 12px;">✓</div><div style="color:var(--muted);font-size:14px;">请继续完成护理记录</div></div>',
+    '<button class="btn teal full" onclick="closeOv();S.page=\'record\';render()">去护理记录</button>');
+  render();
+}
+function renderRecord(){
+  const o=order();
+  app().innerHTML=`<div class="phone"><div class="nav"><button class="back" onclick="S.page='nurseDetail';render()">‹</button>护理记录</div>
+    <div class="body">
+      <div class="card"><div class="row"><span class="k">服务对象</span><span class="v">${o.patient} ｜ ${MOCK.patientMeta}</span></div><div class="row"><span class="k">服务项目</span><span class="v">${o.svc}</span></div></div>
+      <div class="card"><div style="font-weight:700;color:var(--dark);margin-bottom:10px;">护理图片记录 <span style="color:var(--red);">*</span></div>
+        <div style="display:flex;gap:10px;"><div class="upload" onclick="alert('调用相机/相册（演示）')">＋</div><div class="proof" style="width:74px;height:74px;">示例图</div></div>
+        <div style="color:var(--muted);font-size:13px;margin-top:8px;">请拍摄护理部位等相关图片</div></div>
+      <div class="card"><div style="font-weight:700;color:var(--dark);margin-bottom:8px;">护理备注 <span style="color:var(--red);">*</span></div>
+        <textarea id="rc-note" style="width:100%;border:1px solid var(--border);border-radius:10px;padding:10px;min-height:90px;">伤口包扎完整，愈合进度正常</textarea></div>
+      <button class="btn teal full" onclick="saveRecord()">提交护理记录</button>
+    </div>
+  </div>`;
+}
+function saveRecord(){
+  const o=order(); o.record={content:$('rc-note').value}; o.tasks.record=true; S.page='nurseDetail';
+  sheet('护理记录已提交','<div style="text-align:center;"><div style="width:70px;height:70px;border-radius:50%;background:#e6f7f5;color:var(--green);display:flex;align-items:center;justify-content:center;font-size:36px;margin:0 auto 12px;">✓</div><div style="color:var(--muted);font-size:14px;">代办事项已完成，可完成打卡</div></div>',
+    '<button class="btn teal full" onclick="closeOv();render()">返回服务详情</button>');
+  render();
+}
+function nurseCheckout(){
+  const o=order();
+  if(!(o.tasks.identity&&o.tasks.diagnosis&&o.tasks.assess&&o.tasks.record)){ alert('请先完成全部代办事项（身份确认、就医证明确认、现场评估、护理记录）再完成服务'); return; }
+  o.checkout='16:30'; o.status='已完成';
+  sheet('完成服务',
+    `<div style="display:flex;gap:10px;margin-bottom:16px;">
+      <div style="flex:1;background:#f9fafb;border-radius:12px;padding:12px;"><div style="font-size:13px;color:var(--muted);">开始打卡</div><div style="color:var(--green);font-weight:700;">✓ ${o.checkin}</div></div>
+      <div style="flex:1;background:#f9fafb;border-radius:12px;padding:12px;"><div style="font-size:13px;color:var(--muted);">完成打卡</div><div style="color:var(--green);font-weight:700;">✓ ${o.checkout}</div></div></div>
+    <div style="text-align:center;"><div style="width:120px;height:120px;border-radius:50%;background:var(--green);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 12px;"><div style="font-size:16px;">完成打卡</div><div style="font-size:20px;font-weight:700;">${o.checkout}:21</div></div>
+    <div style="color:var(--muted);font-size:13px;text-align:left;">当前地址：${o.addr}</div></div>`,
+    '<button class="btn teal full" onclick="closeOv();S.page=\'nurseList\';render()">返回服务单</button>');
+  render();
+}
+
+// ================= 平台端 =================
+const NURSES=[
+  {name:'林晓静', title:'高级护理员 · 从业 5 年', level:'高级'},
+  {name:'赵敏',  title:'护理员 · 从业 3 年', level:'中级'},
+  {name:'周琳',  title:'护理员 · 从业 2 年', level:'初级'},
+];
+function renderAdmin(){
+  if(!S.adminPage) S.adminPage='dashboard';
+  const nav=[['dashboard','数据看板'],['orders','订单管理'],['schedule','排班管理'],['refunds','退款审核'],['qc','服务质控'],['nurses','护理员管理'],['services','服务项目与价格'],['refundRules','退款规则配置']];
+  const render={dashboard:aDashboard,orders:aOrders,schedule:aSchedule,refunds:aRefunds,qc:aQc,nurses:aNurses,services:aServices,refundRules:aRefundRules}[S.adminPage];
+  app().innerHTML=`<div style="display:flex;min-height:calc(100vh - 54px);">
+    <div style="width:190px;background:#fff;border-right:1px solid var(--border);padding:12px 0;flex:none;">
+      ${nav.map(([k,t])=>`<div style="padding:12px 20px;cursor:pointer;font-size:15px;border-left:3px solid ${S.adminPage===k?'var(--primary)':'transparent'};color:${S.adminPage===k?'var(--primary)':'var(--text)'};font-weight:${S.adminPage===k?'700':'400'};background:${S.adminPage===k?'#fff7f2':'transparent'}" onclick="S.adminPage='${k}';render()">${t}</div>`).join('')}
+    </div>
+    <div style="flex:1;padding:22px;overflow:auto;">${render()}</div>
+  </div>`;
+}
+function h1(t,sub){ return `<h1 style="font-size:21px;color:var(--dark);margin-bottom:4px;">${t}</h1><p style="color:var(--muted);font-size:14px;margin-bottom:16px;">${sub}</p>`; }
+function stat(label,val,color){ return `<div style="flex:1;min-width:150px;background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px;"><div style="font-size:28px;font-weight:800;color:${color||'var(--primary)'};">${val}</div><div style="color:var(--muted);font-size:14px;">${label}</div></div>`; }
+function adminTable(head,rows){ return `<table style="border:1px solid var(--border);border-radius:8px;overflow:hidden;background:#fff;"><thead><tr>${head.map(h=>`<th style="background:#f3f4f6;color:var(--dark);font-weight:600;text-align:left;padding:10px 13px;font-size:14px;border:none;border-bottom:1px solid var(--border);">${h}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map(c=>`<td style="text-align:left;padding:10px 13px;font-size:14px;border:none;border-bottom:1px solid var(--border);">${c}</td>`).join('')}</tr>`).join('')}</tbody></table>`; }
+
+function aDashboard(){
+  const c=st=>S.orders.filter(o=>o.status===st).length;
+  const revenue=S.orders.filter(o=>['待服务','已完成'].includes(o.status)).reduce((a,o)=>a+o.price+o.transport,0);
+  return h1('数据看板','平台运营概览')+
+    `<div style="display:flex;gap:14px;flex-wrap:wrap;">
+      ${stat('今日订单',S.orders.length)}${stat('待确认',c('待确认'))}${stat('待服务',c('待服务'))}
+      ${stat('退款待审',c('退款中'),'var(--red)')}${stat('已完成',c('已完成'),'var(--green)')}${stat('本月营收','¥'+revenue,'var(--dark)')}
+    </div>
+    <div style="background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px;margin-top:16px;max-width:560px;">
+      <div style="font-weight:700;color:var(--dark);margin-bottom:8px;">待处理事项</div>
+      <div class="row"><span class="k">待确认订单（需派单）</span><span class="v">${c('待确认')} 单</span></div>
+      <div class="row"><span class="k">待审核退款</span><span class="v">${c('退款中')} 单</span></div>
+    </div>`;
+}
+function aOrders(){
+  const f=S.adminFilter||'全部';
+  const list=S.orders.filter(o=>f==='全部'||o.status===f);
+  const rows=list.map(o=>[o.no,o.svc,o.patient,o.time,'¥'+(o.price+o.transport),tag(o.status),o.caregiver||'—',
+    o.status==='待确认'?`<button class="wbtn sm" onclick="openAssign(${o.id})">确认派单</button>`
+    :o.status==='待服务'?'<span style="color:var(--muted);font-size:13px;">服务中</span>'
+    :o.status==='退款中'?`<span style="color:var(--muted);font-size:13px;">待退款审核</span>`
+    :'<span style="color:var(--muted);font-size:13px;">—</span>']);
+  return h1('订单管理','平台确认、派单、状态跟踪 · 共 '+S.orders.length+' 单')+
+    `<div style="display:flex;justify-content:space-between;align-items:center;">
+      <div class="chips" style="margin-bottom:0;">${['全部','待确认','待服务','已完成','退款中'].map(x=>`<div class="chip ${f===x?'active':''}" onclick="S.adminFilter='${x}';render()">${x}</div>`).join('')}</div>
+      <button class="wbtn sm" style="flex:none;margin-bottom:10px;" onclick="exportOrders()">导出订单</button>
+    </div>
+    ${adminTable(['订单编号','服务项目','服务对象','预约时间','金额','状态','护理员','操作'],rows)}`;
+}
+function openAssign(id){
+  S.assignId=id;
+  const rows=NURSES.map((n,i)=>{
+    const load=S.orders.filter(o=>o.caregiver===n.name&&o.status==='待服务').length;
+    return `<label style="display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--border);border-radius:8px;margin-bottom:10px;cursor:pointer;">
+      <input type="radio" name="nurse" value="${n.name}" ${i===0?'checked':''}>
+      <div><div style="font-weight:600;color:var(--dark);">${n.name}</div><div style="font-size:13px;color:var(--muted);">${n.title} · 今日待服务 ${load} 单</div></div></label>`;
+  }).join('');
+  webModal('确认派单', rows, '<button class="wbtn line" onclick="closeOv()">取消</button><button class="wbtn" onclick="doAssign()">确认派单</button>');
+}
+function doAssign(){
+  const sel=document.querySelector('input[name=nurse]:checked');
+  const name=sel?sel.value:NURSES[0].name;
+  const o=S.orders.find(x=>x.id===S.assignId); const n=NURSES.find(x=>x.name===name);
+  o.status='待服务'; o.caregiver=n.name; o.caregiverTitle=n.title;
+  closeOv(); render();
+}
+function aRefunds(){
+  const list=S.orders.filter(o=>o.status==='退款中');
+  const rows=list.map(o=>[o.no,o.svc,'¥'+(o.price+o.transport),o.cancelReason||'—',
+    `<button class="wbtn sm" onclick="adminRefund(${o.id},1)">同意退款</button> <button class="wbtn line sm" onclick="adminRefund(${o.id},0)">拒绝</button>`]);
+  return h1('退款审核','待审核 '+list.length+' 单')+
+    (list.length? adminTable(['订单编号','服务项目','退款金额','取消原因','操作'],rows) : '<div style="background:#fff;border:1px solid var(--border);border-radius:12px;padding:40px;text-align:center;color:var(--muted);">暂无待审核退款</div>');
+}
+function adminRefund(id,ok){
+  const o=S.orders.find(x=>x.id===id);
+  if(ok){ o.status='已退款'; alert('已同意退款，金额将退回用户'); }
+  else { o.status='待服务'; alert('已拒绝退款，订单恢复为待服务'); }
+  render();
+}
+function aQc(){
+  const list=S.orders.filter(o=>o.checkin||o.status==='已完成');
+  const rows=list.map(o=>[o.no,o.svc,o.caregiver||'—',(o.checkin||'—')+' / '+(o.checkout||'—'),
+    (o.tasks.assess?'<span class="tag green">已完成</span>':'<span class="tag gray">未完成</span>'),
+    (o.tasks.record?'<span class="tag green">已完成</span>':'<span class="tag gray">未完成</span>'),
+    `<button class="wbtn line sm" onclick="openQc(${o.id})">查看</button>`]);
+  return h1('服务质控','核查护理员的签到、现场评估与护理记录 · '+list.length+' 单')+
+    (list.length? adminTable(['订单编号','服务项目','护理员','开始/结束打卡','现场评估','护理记录','操作'],rows) : '<div style="background:#fff;border:1px solid var(--border);border-radius:12px;padding:40px;text-align:center;color:var(--muted);">暂无可质控的服务单</div>');
+}
+function openQc(id){
+  const o=S.orders.find(x=>x.id===id); const a=o.assess||{};
+  webModal('服务质控详情',
+    `<div class="wrow"><span class="k">订单编号</span><span class="v">${o.no}</span></div>
+     <div class="wrow"><span class="k">服务项目</span><span class="v">${o.svc}</span></div>
+     <div class="wrow"><span class="k">服务对象</span><span class="v">${o.patient}</span></div>
+     <div class="wrow"><span class="k">护理员</span><span class="v">${o.caregiver||'—'}</span></div>
+     <div class="wrow"><span class="k">签到打卡</span><span class="v">${o.checkin||'—'} / ${o.checkout||'—'}</span></div>
+     <div style="font-weight:700;color:var(--dark);margin:14px 0 6px;">现场评估</div>
+     <div class="wrow"><span class="k">是否符合操作条件</span><span class="v">${a.ok||'—'}</span></div>
+     <div class="wrow"><span class="k">精神状态</span><span class="v">${a.mind||'—'}</span></div>
+     <div class="wrow"><span class="k">生命体征</span><span class="v">${a.bp?a.bp+' / '+a.hr:'—'}</span></div>
+     <div class="wrow"><span class="k">皮肤 / 伤口</span><span class="v">${a.skin||'—'}</span></div>
+     <div class="wrow"><span class="k">环境安全</span><span class="v">${a.env||'—'}</span></div>
+     <div style="font-weight:700;color:var(--dark);margin:14px 0 6px;">护理记录</div>
+     <div style="display:flex;gap:8px;margin-bottom:8px;"><div class="proof" style="width:70px;height:70px;">护理图</div><div class="proof" style="width:70px;height:70px;">护理图</div></div>
+     <div style="color:var(--dark);">${(o.record&&o.record.content)||'—'}</div>`,
+    '<button class="wbtn line" onclick="closeOv()">关闭</button>');
+}
+function aNurses(){
+  const rows=NURSES.map(n=>[n.name,n.level,n.title,
+    S.orders.filter(o=>o.caregiver===n.name&&o.status==='待服务').length,
+    S.orders.filter(o=>o.caregiver===n.name&&o.status==='已完成').length,
+    `<span class="tag green">在职</span>`]);
+  return h1('护理员管理','护理员名录与排班负载 · '+NURSES.length+' 人')+
+    adminTable(['姓名','等级','资历','待服务','已完成','状态'],rows);
+}
+function aServices(){
+  const rows=S.services.map((s,i)=>[s.name,'¥'+s.price,s.desc,
+    `<button class="wbtn line sm" onclick="editService(${i})">编辑</button> <button class="wbtn line sm" onclick="delService(${i})">下架</button>`]);
+  return h1('服务项目与价格','维护可预约的服务与定价 · 共 '+S.services.length+' 项')+
+    `<div style="margin-bottom:14px;"><button class="wbtn" onclick="openAddService()">+ 新增服务项目</button></div>`+
+    adminTable(['服务项目','价格','说明','操作'],rows);
+}
+function openAddService(){
+  webModal('新增服务项目',
+    `<div class="wfield"><label>服务项目名称 <span style="color:var(--red);">*</span></label><input id="ns-name" placeholder="如：造口护理"></div>
+     <div class="wfield"><label>价格（元 / 次） <span style="color:var(--red);">*</span></label><input id="ns-price" type="number" placeholder="如 120"></div>
+     <div class="wfield"><label>说明</label><textarea id="ns-desc" placeholder="服务内容说明（可选）" style="min-height:80px;"></textarea></div>`,
+    `<button class="wbtn line" onclick="closeOv()">取消</button><button class="wbtn" onclick="saveNewService()">保存</button>`);
+}
+function saveNewService(){
+  const name=$('ns-name').value.trim(); const price=+$('ns-price').value;
+  if(!name){ alert('请输入服务项目名称'); return; }
+  if(!price){ alert('请输入价格'); return; }
+  S.services.push({ name, price, desc:$('ns-desc').value.trim()||'上门护理服务' });
+  closeOv(); render();
+}
+function delService(i){ if(confirm('确认下架该服务项目？下架后用户端不再展示。')){ S.services.splice(i,1); render(); } }
+function editService(i){
+  const s=S.services[i];
+  webModal('编辑服务项目',
+    `<div class="wfield"><label>服务项目名称</label><input id="sv-name" value="${s.name}"></div>
+     <div class="wfield"><label>价格（元 / 次）</label><input id="sv-price" type="number" value="${s.price}"></div>
+     <div class="wfield"><label>说明</label><textarea id="sv-desc" style="min-height:80px;">${s.desc}</textarea></div>`,
+    `<button class="wbtn line" onclick="closeOv()">取消</button><button class="wbtn" onclick="saveService(${i})">保存</button>`);
+}
+function saveService(i){ const s=S.services[i]; s.name=$('sv-name').value.trim()||s.name; s.price=+$('sv-price').value||s.price; s.desc=$('sv-desc').value; closeOv(); render(); }
+
+const WEEK=[['周一','10/13'],['周二','10/14'],['周三','10/15'],['周四','10/16'],['周五','10/17'],['周六','10/18'],['周日','10/19']];
+const SCHEDULE={
+  '林晓静':{0:['09:00 上门打针'],1:['14:00 留置更换胃管','16:00 伤口护理'],3:['10:00 PICC 导管维护'],4:['09:00 肌肉注射']},
+  '赵敏':{1:['10:00 伤口护理'],2:['14:00 上门打针'],4:['10:00 留置更换胃管'],5:['09:00 肌肉注射']},
+  '周琳':{0:['15:00 PICC 导管维护'],2:['09:00 肌肉注射'],3:['14:00 伤口护理'],6:['10:00 上门打针']},
+};
+function aSchedule(){
+  let html='<table style="border:1px solid var(--border);border-radius:8px;overflow:hidden;background:#fff;table-layout:fixed;"><thead><tr>';
+  html+=`<th style="background:#f3f4f6;padding:10px;font-size:13px;color:var(--dark);border:1px solid var(--border);width:86px;">护理员</th>`;
+  WEEK.forEach(w=>html+=`<th style="background:#f3f4f6;padding:10px;font-size:13px;color:var(--dark);border:1px solid var(--border);">${w[0]}<br><span style="font-weight:400;color:var(--muted);">${w[1]}</span></th>`);
+  html+='</tr></thead><tbody>';
+  NURSES.forEach(n=>{
+    html+=`<tr><td style="padding:10px;border:1px solid var(--border);font-weight:600;color:var(--dark);">${n.name}</td>`;
+    for(let d=0;d<7;d++){
+      const items=(SCHEDULE[n.name]||{})[d]||[];
+      html+=`<td style="padding:6px;border:1px solid var(--border);vertical-align:top;height:64px;">${items.map(it=>`<div style="background:#fff2e8;color:var(--primary);border-radius:6px;padding:5px 7px;font-size:12px;margin-bottom:4px;">${it}</div>`).join('')||'<span style="color:#d1d5db;font-size:12px;">空闲</span>'}</td>`;
+    }
+    html+='</tr>';
+  });
+  html+='</tbody></table>';
+  const total=Object.values(SCHEDULE).reduce((a,m)=>a+Object.values(m).reduce((x,arr)=>x+arr.length,0),0);
+  return h1('排班管理','护理员本周排班日历 · 共 '+total+' 单')+html;
+}
+function exportOrders(){
+  const rows=[['订单编号','服务项目','服务对象','预约时间','金额','状态','护理员']];
+  S.orders.forEach(o=>rows.push([o.no,o.svc,o.patient,o.time,'¥'+(o.price+o.transport),o.status,o.caregiver||'']));
+  const csv='\ufeff'+rows.map(r=>r.join(',')).join('\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='订单导出.csv'; a.click();
+  alert('已导出 '+S.orders.length+' 条订单（演示）');
+}
+let REFUND_RULES=[
+  {cond:'预约时间前一天', pct:0},
+  {cond:'距离订单开始时间 ≥2 小时', pct:0},
+  {cond:'距离订单开始时间 ≤2 小时', pct:30},
+  {cond:'护士已上门', pct:50, extra:'+ 交通费'},
+];
+function aRefundRules(){
+  const rows=REFUND_RULES.map((r,i)=>[r.cond, r.pct===0?'不扣费':('扣服务费的 '+r.pct+'%'+(r.extra||'')), `<button class="wbtn line sm" onclick="editRefundRule(${i})">编辑</button>`]);
+  return h1('退款规则配置','配置用户取消订单时的扣费比例')+
+    adminTable(['取消场景','扣费规则','操作'],rows)+
+    `<div style="background:#fff8f3;border:1px solid #fed7aa;border-radius:12px;padding:12px 14px;color:var(--primary);font-size:14px;margin-top:14px;max-width:640px;">规则由平台维护，用户端「取消预约」页展示的退款金额与扣费说明，按这里的配置实时计算。</div>`;
+}
+function editRefundRule(i){
+  const r=REFUND_RULES[i];
+  webModal('编辑扣费比例',
+    `<div class="wfield"><label>取消场景</label><input value="${r.cond}" disabled style="background:#f9fafb;color:var(--muted);"></div>
+     <div class="wfield"><label>扣服务费比例（%）</label><input id="rr-pct" type="number" value="${r.pct}"></div>`,
+    `<button class="wbtn line" onclick="closeOv()">取消</button><button class="wbtn" onclick="saveRefundRule(${i})">保存</button>`);
+}
+function saveRefundRule(i){ REFUND_RULES[i].pct=+$('rr-pct').value; closeOv(); render(); }
+
+setEnd('user');
+</script>
+</body>
+</html>
