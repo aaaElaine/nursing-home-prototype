@@ -139,7 +139,7 @@ const MOCK = {
   patient:'陈美娟', patientMeta:'女 ｜ 68 岁 ｜ 失能 2 级',
   phone:'138 0000 0000',
   addr:'苏州市示例区示范路 18 号 阳光家园 2 栋 601',
-  org:'苏康养家床服务中心',
+  org:'示范家床服务中心',
   nurse:'林晓静', nurseTitle:'高级护理员 · 从业 5 年',
 };
 
@@ -239,13 +239,13 @@ function renderUser(){
         <div class="field"><label>验证码</label><div style="display:flex;gap:8px;"><input id="lg-code" placeholder="请输入验证码" style="flex:1;background:#f9fafb;"><button class="btn sm" style="background:#fff2e8;color:var(--primary);border-radius:10px;" onclick="alert('验证码已发送（演示：1234）')">获取验证码</button></div></div>
         <button class="btn full" style="margin-top:6px;" onclick="userLogin()">登录</button>
       </div>
-      <div style="text-align:center;color:var(--muted);font-size:13px;margin-top:20px;">苏康养 · 家庭养老床位服务</div>
+        <div style="text-align:center;color:var(--muted);font-size:13px;margin-top:20px;">家庭养老床位 · 示范服务</div>
     </div>`;
   }
   else if(S.page==='home'){
     app().innerHTML=`<div class="phone"><div class="nav">家床派单系统</div>
       <div class="body">
-        <div class="hero"><div class="big">苏康养<br>让专业照护走进千万家</div><div class="sub">家庭养老床位 · 示范服务</div></div>
+        <div class="hero"><div class="big">让专业照护<br>走进千万家</div><div class="sub">家庭养老床位 · 示范服务</div></div>
         <div class="card"><div style="font-weight:700;color:var(--dark);margin-bottom:10px;">服务流程</div>
           <div class="flow"><span class="step">① 预约服务</span><span class="arrow">→</span><span class="step">② 填写信息</span><span class="arrow">→</span><span class="step">③ 完成支付</span><span class="arrow">→</span><span class="step">④ 平台确认</span><span class="arrow">→</span><span class="step">⑤ 护理员上门</span><span class="arrow">→</span><span class="step">⑥ 服务完成</span></div>
         </div>
@@ -342,7 +342,7 @@ function submitBooking(){
   const amt=(S.draft.price+30)-Math.round(S.draft.price*0.6)-Math.round(S.draft.price*0.3);
   pwd=[];
   sheet('请输入支付密码',
-    `<div style="text-align:center;color:var(--muted);font-size:14px;">苏康养家床服务</div>
+     `<div style="text-align:center;color:var(--muted);font-size:14px;">家床服务</div>
      <div style="text-align:center;font-size:32px;font-weight:800;color:var(--dark);margin:8px 0 4px;">¥ ${amt}.00</div>
      <div class="row" style="border:none;"><span class="k">支付方式</span><span class="v">🪙 零钱 ›</span></div>
      <div class="pwd" id="pwd-box">${Array.from({length:6}).map(()=>'<span></span>').join('')}</div>
