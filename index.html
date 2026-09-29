@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>护理到家 · 高保真原型</title>
+<title>家床派单系统 · 高保真原型</title>
 <style>
   :root{--primary:#ff7a45;--primary2:#e8502a;--dark:#23262e;--text:#333;--muted:#6b7280;--border:#e5e7eb;--bg:#f5f6f8;--card:#fff;--green:#2bb3a3;--red:#dc2626;--blue:#4f83cc;}
   *{box-sizing:border-box;margin:0;padding:0;}
@@ -122,7 +122,7 @@
 <body>
 
 <div class="topbar">
-  <div class="brand">护理到家 <span>· 高保真原型</span></div>
+  <div class="brand">家床派单系统 <span>· 高保真原型</span></div>
   <div class="switch">
     <button id="e-user" class="active" onclick="setEnd('user')">用户端</button>
     <button id="e-nurse" onclick="setEnd('nurse')">护理端</button>
@@ -136,45 +136,45 @@
 <script>
 // ============ 统一假数据（虚构，不含真实人名与地址） ============
 const MOCK = {
-  patient:'陈美娟', patientMeta:'女 ｜ 68 岁',
+  patient:'陈美娟', patientMeta:'女 ｜ 68 岁 ｜ 失能 2 级',
   phone:'138 0000 0000',
   addr:'苏州市示例区示范路 18 号 阳光家园 2 栋 601',
-  org:'苏康养示范护理院',
+  org:'苏康养家床服务中心',
   nurse:'林晓静', nurseTitle:'高级护理员 · 从业 5 年',
 };
 
 const S = {
   end:'user', user:null, page:'login', filter:'全部', orderTab:'服务订单', cancelReason:'',
   orders:[
-    { id:1, no:'8800000001', svc:'上门打针', price:99, transport:30, status:'待确认',
+    { id:1, no:'8800000001', svc:'生活照料', price:99, transport:30, status:'待确认',
       patient:MOCK.patient, phone:MOCK.phone, addr:MOCK.addr, time:'2025-10-10 14:00-15:00',
-      note:'按医嘱上门注射，不提供药品。', caregiver:'', site:MOCK.org,
+      note:'按照护计划上门服务，费用可用长护险 / 补贴抵扣（演示）。', caregiver:'', site:MOCK.org,
       createTime:'2025-08-08 10:30:56', payTime:'2025-08-08 10:30:56', payMethod:'微信支付',
       checkin:'', checkout:'', tasks:{identity:false,diagnosis:false,assess:false,record:false}, assess:null, record:null },
-    { id:2, no:'8800000002', svc:'留置更换胃管', price:89, transport:30, status:'待服务',
+    { id:2, no:'8800000002', svc:'助浴服务', price:89, transport:30, status:'待服务',
       patient:MOCK.patient, phone:MOCK.phone, addr:MOCK.addr, time:'2025-10-12 10:00-11:00',
       note:'', caregiver:MOCK.nurse, caregiverTitle:MOCK.nurseTitle, site:MOCK.org,
       createTime:'2025-08-08 10:30:56', payTime:'2025-08-08 10:31:05', payMethod:'微信支付',
       checkin:'', checkout:'', tasks:{identity:false,diagnosis:false,assess:false,record:false}, assess:null, record:null },
-    { id:3, no:'8800000003', svc:'伤口护理', price:99, transport:30, status:'已完成',
+    { id:3, no:'8800000003', svc:'陪同就医', price:99, transport:30, status:'已完成',
       patient:MOCK.patient, phone:MOCK.phone, addr:MOCK.addr, time:'2025-10-08 10:00-11:00',
       note:'', caregiver:MOCK.nurse, caregiverTitle:MOCK.nurseTitle, site:MOCK.org,
       createTime:'2025-10-05 09:00:00', payTime:'2025-10-05 09:01:00', payMethod:'微信支付',
-      checkin:'10:02', checkout:'10:58', tasks:{identity:true,diagnosis:true,assess:true,record:true}, assess:{}, record:{content:'伤口换药完成，愈合正常'} },
-    { id:4, no:'8800000004', svc:'PICC 导管维护', price:150, transport:30, status:'退款中',
+      checkin:'10:02', checkout:'10:58', tasks:{identity:true,diagnosis:true,assess:true,record:true}, assess:{}, record:{content:'生活照料完成，老人状态良好'} },
+    { id:4, no:'8800000004', svc:'康复训练', price:150, transport:30, status:'退款中',
       patient:MOCK.patient, phone:MOCK.phone, addr:MOCK.addr, time:'2025-10-13 09:00-10:00',
       note:'', caregiver:'', site:MOCK.org,
       createTime:'2025-10-06 09:00:00', payTime:'2025-10-06 09:01:00', payMethod:'微信支付',
       checkin:'', checkout:'', tasks:{identity:false,diagnosis:false,assess:false,record:false}, assess:null, record:null },
   ],
   services:[
-    {name:'上门打针', price:99, desc:'专业护士上门为有需要打针的患者提供服务，不提供药品'},
-    {name:'PICC 导管维护', price:150, desc:'导管维护、冲管、换敷料'},
-    {name:'留置更换胃管', price:129, desc:'专业护士上门更换留置胃管'},
-    {name:'伤口护理', price:99, desc:'伤口换药、清创、观察愈合'},
-    {name:'肌肉注射', price:80, desc:'按医嘱肌肉注射，不提供药品'},
+    {name:'生活照料', price:99, desc:'护理员上门提供起居照料、清洁、陪护'},
+    {name:'助浴服务', price:150, desc:'护理员上门协助老人沐浴、清洁'},
+    {name:'康复训练', price:120, desc:'协助肢体功能康复训练'},
+    {name:'陪同就医', price:100, desc:'陪诊、代取药、就医协助'},
+    {name:'健康监测', price:80, desc:'血压、血糖等体征监测与记录'},
   ],
-  reasons:['用户计划有变，不需要了','用户预约信息填写错','用户服务项目变化','用户身体状况不佳','用户不在家','平台派单错误','护士临时有事无法服务','极端天气','护士身体状况不佳','其他原因'],
+  reasons:['用户计划有变，不需要了','用户预约信息填写错','用户服务项目变化','用户身体状况不佳','用户不在家','平台派单错误','护理员临时有事无法服务','极端天气','护理员身体状况不佳','其他原因'],
 };
 const $ = id => document.getElementById(id);
 const app = () => $('app');
@@ -213,7 +213,7 @@ function renderUser(){
     app().innerHTML=`<div class="phone">
       <div class="grad" style="padding:46px 24px 64px;color:#fff;text-align:center;">
         <div style="width:70px;height:70px;border-radius:50%;background:rgba(255,255,255,.25);margin:0 auto 14px;display:flex;align-items:center;justify-content:center;font-size:34px;">✚</div>
-        <div style="font-size:18px;">您好，欢迎使用护理到家！</div>
+        <div style="font-size:18px;">您好，欢迎使用家床派单系统！</div>
       </div>
       <div style="background:#fff;border-radius:16px;margin:-36px 16px 0;padding:22px;box-shadow:0 6px 20px rgba(0,0,0,.08);">
         <div style="font-size:22px;font-weight:800;color:var(--dark);margin-bottom:16px;">验证码登录</div>
@@ -221,15 +221,15 @@ function renderUser(){
         <div class="field"><label>验证码</label><div style="display:flex;gap:8px;"><input id="lg-code" placeholder="请输入验证码" style="flex:1;background:#f9fafb;"><button class="btn sm" style="background:#fff2e8;color:var(--primary);border-radius:10px;" onclick="alert('验证码已发送（演示：1234）')">获取验证码</button></div></div>
         <button class="btn full" style="margin-top:6px;" onclick="userLogin()">登录</button>
       </div>
-      <div style="text-align:center;color:var(--muted);font-size:13px;margin-top:20px;">苏康养 · 专业护理走进千万家</div>
+      <div style="text-align:center;color:var(--muted);font-size:13px;margin-top:20px;">苏康养 · 家庭养老床位服务</div>
     </div>`;
   }
   else if(S.page==='home'){
-    app().innerHTML=`<div class="phone"><div class="nav">护理到家</div>
+    app().innerHTML=`<div class="phone"><div class="nav">家床派单系统</div>
       <div class="body">
-        <div class="hero"><div class="big">苏康养<br>让专业护理走进千万家</div><div class="sub">示例护理机构提供服务</div></div>
+        <div class="hero"><div class="big">苏康养<br>让专业照护走进千万家</div><div class="sub">家庭养老床位 · 示范服务</div></div>
         <div class="card"><div style="font-weight:700;color:var(--dark);margin-bottom:10px;">服务流程</div>
-          <div class="flow"><span class="step">① 预约服务</span><span class="arrow">→</span><span class="step">② 填写信息</span><span class="arrow">→</span><span class="step">③ 完成支付</span><span class="arrow">→</span><span class="step">④ 平台确认</span><span class="arrow">→</span><span class="step">⑤ 护士上门</span><span class="arrow">→</span><span class="step">⑥ 服务完成</span></div>
+          <div class="flow"><span class="step">① 预约服务</span><span class="arrow">→</span><span class="step">② 填写信息</span><span class="arrow">→</span><span class="step">③ 完成支付</span><span class="arrow">→</span><span class="step">④ 平台确认</span><span class="arrow">→</span><span class="step">⑤ 护理员上门</span><span class="arrow">→</span><span class="step">⑥ 服务完成</span></div>
         </div>
         <div style="font-weight:700;color:var(--dark);margin:6px 0 10px;">服务项目</div>
         ${S.services.map((s,i)=>`<div class="svc" onclick="pickService(${i})"><div class="thumb"></div><div><div class="t">${s.name}</div><div class="d">${s.desc}</div></div><div class="p">¥${s.price}<span style="font-size:12px;color:var(--muted);"> 起/次</span></div></div>`).join('')}
@@ -292,7 +292,7 @@ function submitBooking(){
   const amt=S.draft.price+30;
   pwd=[];
   sheet('请输入支付密码',
-    `<div style="text-align:center;color:var(--muted);font-size:14px;">苏康养商户</div>
+    `<div style="text-align:center;color:var(--muted);font-size:14px;">苏康养家床服务</div>
      <div style="text-align:center;font-size:32px;font-weight:800;color:var(--dark);margin:8px 0 4px;">¥ ${amt}.00</div>
      <div class="row" style="border:none;"><span class="k">支付方式</span><span class="v">🪙 零钱 ›</span></div>
      <div class="pwd" id="pwd-box">${Array.from({length:6}).map(()=>'<span></span>').join('')}</div>
@@ -361,17 +361,17 @@ function renderServiceDetail(role){
         <div class="row"><span class="k">备注</span><span class="v">${o.note||'—'}</span></div>
       </div>
       <div class="card">
-        <div style="font-weight:700;color:var(--dark);margin-bottom:10px;">就医证明（${proofs}）</div>
+        <div style="font-weight:700;color:var(--dark);margin-bottom:10px;">失能评估证明（${proofs}）</div>
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;">
-          ${Array.from({length:proofs}).map(()=>`<div class="proof" style="width:100%;height:80px;">就医证明</div>`).join('')}
+          ${Array.from({length:proofs}).map(()=>`<div class="proof" style="width:100%;height:80px;">失能评估证明</div>`).join('')}
         </div>
       </div>
       <div class="card">
         <div style="font-weight:700;color:var(--dark);margin-bottom:6px;">代办事项</div>
-        ${taskLine('身份确认','患者信息确认，服务内容、时间地点确认风险告知',o.tasks.identity)}
-        ${taskLine('就医证明确认','医嘱信息核对',o.tasks.diagnosis)}
+        ${taskLine('身份确认','老人信息确认，服务内容、时间地点确认风险告知',o.tasks.identity)}
+        ${taskLine('评估证明核对','照护要求核对',o.tasks.diagnosis)}
         ${taskLine('现场评估','评估服务对象是否符合操作护理条件',o.tasks.assess)}
-        ${taskLine('护理记录','拍照和记录操作结果',o.tasks.record)}
+        ${taskLine('照护记录','拍照和记录操作结果',o.tasks.record)}
       </div>
       <div class="card">
         <div class="row"><span class="k">开始时间</span><span class="v">${o.checkin?o.time.split(' ')[0]+' '+o.checkin:'待打卡'}</span></div>
@@ -397,7 +397,7 @@ function openCancel(){
        <tr><td>预约时间前一天</td><td>不扣费</td></tr>
        <tr><td>距离订单开始时间 ≥2 小时</td><td>不扣费</td></tr>
        <tr><td>距离订单开始时间 ≤2 小时</td><td>扣服务费的 30%</td></tr>
-       <tr><td>护士已上门</td><td>扣服务费的 50% + 交通费</td></tr></table>`,
+       <tr><td>护理员已上门</td><td>扣服务费的 50% + 交通费</td></tr></table>`,
     `<button class="btn line" onclick="closeOv()">再想想</button><button class="btn" onclick="confirmCancel()">确认</button>`);
 }
 function openReason(){
@@ -477,10 +477,10 @@ function renderNurseDetail(){
       </div>
       <div class="card">
         <div style="font-weight:700;color:var(--dark);margin-bottom:6px;">代办事项</div>
-        ${nurseTask('身份确认','患者信息确认',o.tasks.identity,'identity')}
-        ${nurseTask('就医证明确认','医嘱信息核对',o.tasks.diagnosis,'diagnosis')}
+        ${nurseTask('身份确认','老人信息确认',o.tasks.identity,'identity')}
+        ${nurseTask('评估证明核对','照护要求核对',o.tasks.diagnosis,'diagnosis')}
         <div class="task-line"><div><div class="name">现场评估</div><div class="desc">评估服务对象是否符合操作条件</div></div>${o.tasks.assess?'<span class="tag green">已完成</span>':`<button class="btn teal sm" onclick="S.page='assess';render()">去完成</button>`}</div>
-        <div class="task-line"><div><div class="name">护理记录</div><div class="desc">拍照和记录操作结果</div></div>${o.tasks.record?'<span class="tag green">已完成</span>':`<button class="btn teal sm" ${o.tasks.assess?'':'disabled'} onclick="S.page='record';render()">去完成</button>`}</div>
+        <div class="task-line"><div><div class="name">照护记录</div><div class="desc">拍照和记录操作结果</div></div>${o.tasks.record?'<span class="tag green">已完成</span>':`<button class="btn teal sm" ${o.tasks.assess?'':'disabled'} onclick="S.page='record';render()">去完成</button>`}</div>
       </div>
       <div class="card">
         <div class="row"><span class="k">开始时间</span><span class="v">${o.checkin?o.time.split(' ')[0]+' '+o.checkin:'待打卡'}</span></div>
@@ -522,7 +522,7 @@ function renderAssess(){
       <div class="field"><label>是否符合操作条件</label><select id="as-ok"><option>符合</option><option>不符合（需说明）</option></select></div>
       <div class="field"><label>老人精神状态</label><select id="as-mind"><option>良好</option><option>一般</option><option>较差</option></select></div>
       <div class="field"><label>生命体征（血压 / 心率）</label><div class="grid2"><input id="as-bp" placeholder="130/80"><input id="as-hr" placeholder="72"></div></div>
-      <div class="field"><label>皮肤 / 伤口情况</label><select id="as-skin"><option>正常</option><option>压疮</option><option>破损</option></select></div>
+      <div class="field"><label>皮肤 / 压疮情况</label><select id="as-skin"><option>正常</option><option>压疮</option><option>破损</option></select></div>
       <div class="field"><label>环境安全</label><select id="as-env"><option>安全</option><option>有隐患</option></select></div>
       <button class="btn teal full" onclick="saveAssess()">提交评估</button>
     </div></div>
@@ -532,33 +532,33 @@ function saveAssess(){
   const o=order();
   o.assess={ok:$('as-ok').value,mind:$('as-mind').value,bp:$('as-bp').value,hr:$('as-hr').value,skin:$('as-skin').value,env:$('as-env').value};
   o.tasks.assess=true; S.page='nurseDetail';
-  sheet('现场评估已提交','<div style="text-align:center;"><div style="width:70px;height:70px;border-radius:50%;background:#e6f7f5;color:var(--green);display:flex;align-items:center;justify-content:center;font-size:36px;margin:0 auto 12px;">✓</div><div style="color:var(--muted);font-size:14px;">请继续完成护理记录</div></div>',
-    '<button class="btn teal full" onclick="closeOv();S.page=\'record\';render()">去护理记录</button>');
+  sheet('现场评估已提交','<div style="text-align:center;"><div style="width:70px;height:70px;border-radius:50%;background:#e6f7f5;color:var(--green);display:flex;align-items:center;justify-content:center;font-size:36px;margin:0 auto 12px;">✓</div><div style="color:var(--muted);font-size:14px;">请继续完成照护记录</div></div>',
+    '<button class="btn teal full" onclick="closeOv();S.page=\'record\';render()">去照护记录</button>');
   render();
 }
 function renderRecord(){
   const o=order();
-  app().innerHTML=`<div class="phone"><div class="nav"><button class="back" onclick="S.page='nurseDetail';render()">‹</button>护理记录</div>
+  app().innerHTML=`<div class="phone"><div class="nav"><button class="back" onclick="S.page='nurseDetail';render()">‹</button>照护记录</div>
     <div class="body">
       <div class="card"><div class="row"><span class="k">服务对象</span><span class="v">${o.patient} ｜ ${MOCK.patientMeta}</span></div><div class="row"><span class="k">服务项目</span><span class="v">${o.svc}</span></div></div>
       <div class="card"><div style="font-weight:700;color:var(--dark);margin-bottom:10px;">护理图片记录 <span style="color:var(--red);">*</span></div>
         <div style="display:flex;gap:10px;"><div class="upload" onclick="alert('调用相机/相册（演示）')">＋</div><div class="proof" style="width:74px;height:74px;">示例图</div></div>
         <div style="color:var(--muted);font-size:13px;margin-top:8px;">请拍摄护理部位等相关图片</div></div>
       <div class="card"><div style="font-weight:700;color:var(--dark);margin-bottom:8px;">护理备注 <span style="color:var(--red);">*</span></div>
-        <textarea id="rc-note" style="width:100%;border:1px solid var(--border);border-radius:10px;padding:10px;min-height:90px;">伤口包扎完整，愈合进度正常</textarea></div>
-      <button class="btn teal full" onclick="saveRecord()">提交护理记录</button>
+        <textarea id="rc-note" style="width:100%;border:1px solid var(--border);border-radius:10px;padding:10px;min-height:90px;">老人皮肤状况良好，无压疮</textarea></div>
+      <button class="btn teal full" onclick="saveRecord()">提交照护记录</button>
     </div>
   </div>`;
 }
 function saveRecord(){
   const o=order(); o.record={content:$('rc-note').value}; o.tasks.record=true; S.page='nurseDetail';
-  sheet('护理记录已提交','<div style="text-align:center;"><div style="width:70px;height:70px;border-radius:50%;background:#e6f7f5;color:var(--green);display:flex;align-items:center;justify-content:center;font-size:36px;margin:0 auto 12px;">✓</div><div style="color:var(--muted);font-size:14px;">代办事项已完成，可完成打卡</div></div>',
+  sheet('照护记录已提交','<div style="text-align:center;"><div style="width:70px;height:70px;border-radius:50%;background:#e6f7f5;color:var(--green);display:flex;align-items:center;justify-content:center;font-size:36px;margin:0 auto 12px;">✓</div><div style="color:var(--muted);font-size:14px;">代办事项已完成，可完成打卡</div></div>',
     '<button class="btn teal full" onclick="closeOv();render()">返回服务详情</button>');
   render();
 }
 function nurseCheckout(){
   const o=order();
-  if(!(o.tasks.identity&&o.tasks.diagnosis&&o.tasks.assess&&o.tasks.record)){ alert('请先完成全部代办事项（身份确认、就医证明确认、现场评估、护理记录）再完成服务'); return; }
+  if(!(o.tasks.identity&&o.tasks.diagnosis&&o.tasks.assess&&o.tasks.record)){ alert('请先完成全部代办事项（身份确认、评估证明核对、现场评估、照护记录）再完成服务'); return; }
   o.checkout='16:30'; o.status='已完成';
   sheet('完成服务',
     `<div style="display:flex;gap:10px;margin-bottom:16px;">
@@ -656,8 +656,8 @@ function aQc(){
     (o.tasks.assess?'<span class="tag green">已完成</span>':'<span class="tag gray">未完成</span>'),
     (o.tasks.record?'<span class="tag green">已完成</span>':'<span class="tag gray">未完成</span>'),
     `<button class="wbtn line sm" onclick="openQc(${o.id})">查看</button>`]);
-  return h1('服务质控','核查护理员的签到、现场评估与护理记录 · '+list.length+' 单')+
-    (list.length? adminTable(['订单编号','服务项目','护理员','开始/结束打卡','现场评估','护理记录','操作'],rows) : '<div style="background:#fff;border:1px solid var(--border);border-radius:12px;padding:40px;text-align:center;color:var(--muted);">暂无可质控的服务单</div>');
+  return h1('服务质控','核查护理员的签到、现场评估与照护记录 · '+list.length+' 单')+
+    (list.length? adminTable(['订单编号','服务项目','护理员','开始/结束打卡','现场评估','照护记录','操作'],rows) : '<div style="background:#fff;border:1px solid var(--border);border-radius:12px;padding:40px;text-align:center;color:var(--muted);">暂无可质控的服务单</div>');
 }
 function openQc(id){
   const o=S.orders.find(x=>x.id===id); const a=o.assess||{};
@@ -671,9 +671,9 @@ function openQc(id){
      <div class="wrow"><span class="k">是否符合操作条件</span><span class="v">${a.ok||'—'}</span></div>
      <div class="wrow"><span class="k">精神状态</span><span class="v">${a.mind||'—'}</span></div>
      <div class="wrow"><span class="k">生命体征</span><span class="v">${a.bp?a.bp+' / '+a.hr:'—'}</span></div>
-     <div class="wrow"><span class="k">皮肤 / 伤口</span><span class="v">${a.skin||'—'}</span></div>
+     <div class="wrow"><span class="k">皮肤 / 压疮</span><span class="v">${a.skin||'—'}</span></div>
      <div class="wrow"><span class="k">环境安全</span><span class="v">${a.env||'—'}</span></div>
-     <div style="font-weight:700;color:var(--dark);margin:14px 0 6px;">护理记录</div>
+     <div style="font-weight:700;color:var(--dark);margin:14px 0 6px;">照护记录</div>
      <div style="display:flex;gap:8px;margin-bottom:8px;"><div class="proof" style="width:70px;height:70px;">护理图</div><div class="proof" style="width:70px;height:70px;">护理图</div></div>
      <div style="color:var(--dark);">${(o.record&&o.record.content)||'—'}</div>`,
     '<button class="wbtn line" onclick="closeOv()">关闭</button>');
@@ -720,9 +720,9 @@ function saveService(i){ const s=S.services[i]; s.name=$('sv-name').value.trim()
 
 const WEEK=[['周一','10/13'],['周二','10/14'],['周三','10/15'],['周四','10/16'],['周五','10/17'],['周六','10/18'],['周日','10/19']];
 const SCHEDULE={
-  '林晓静':{0:['09:00 上门打针'],1:['14:00 留置更换胃管','16:00 伤口护理'],3:['10:00 PICC 导管维护'],4:['09:00 肌肉注射']},
-  '赵敏':{1:['10:00 伤口护理'],2:['14:00 上门打针'],4:['10:00 留置更换胃管'],5:['09:00 肌肉注射']},
-  '周琳':{0:['15:00 PICC 导管维护'],2:['09:00 肌肉注射'],3:['14:00 伤口护理'],6:['10:00 上门打针']},
+  '林晓静':{0:['09:00 生活照料'],1:['14:00 助浴服务','16:00 陪同就医'],3:['10:00 康复训练'],4:['09:00 健康监测']},
+  '赵敏':{1:['10:00 陪同就医'],2:['14:00 生活照料'],4:['10:00 助浴服务'],5:['09:00 健康监测']},
+  '周琳':{0:['15:00 康复训练'],2:['09:00 健康监测'],3:['14:00 陪同就医'],6:['10:00 生活照料']},
 };
 function aSchedule(){
   let html='<table style="border:1px solid var(--border);border-radius:8px;overflow:hidden;background:#fff;table-layout:fixed;"><thead><tr>';
@@ -753,7 +753,7 @@ let REFUND_RULES=[
   {cond:'预约时间前一天', pct:0},
   {cond:'距离订单开始时间 ≥2 小时', pct:0},
   {cond:'距离订单开始时间 ≤2 小时', pct:30},
-  {cond:'护士已上门', pct:50, extra:'+ 交通费'},
+  {cond:'护理员已上门', pct:50, extra:'+ 交通费'},
 ];
 function aRefundRules(){
   const rows=REFUND_RULES.map((r,i)=>[r.cond, r.pct===0?'不扣费':('扣服务费的 '+r.pct+'%'+(r.extra||'')), `<button class="wbtn line sm" onclick="editRefundRule(${i})">编辑</button>`]);
