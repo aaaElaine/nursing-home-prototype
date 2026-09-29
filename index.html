@@ -184,6 +184,13 @@ const S = {
     {id:1,pid:1,level:2,items:['生活照料 · 每周 3 次','健康监测 · 每周 2 次'],cycle:'2025-10 至 2026-09',status:'执行中'},
     {id:2,pid:2,level:3,items:['助浴服务 · 每周 1 次','康复训练 · 每周 2 次','陪同就医 · 按需'],cycle:'2025-10 至 2026-09',status:'执行中'},
   ],
+  applications:[
+    {id:1,patient:'王秀兰',family:'王强（子）',addr:'苏州市示例区平安路 9 号 康乐小区 4 栋 201',status:'待审核',applyTime:'2025-10-12'},
+    {id:2,patient:'陈美娟',family:'陈伟（子）',addr:'苏州市示例区示范路 18 号 阳光家园 2 栋 601',status:'已通过',applyTime:'2025-09-20'},
+  ],
+  reviews:[
+    {id:1,order:'8800000003',patient:'陈美娟',score:5,tags:['服务专业','态度亲切'],text:'护理员上门准时，老人很满意。',reply:''},
+  ],
 };
 // 家床结算：服务费 = 长护险(60%) + 政府补贴(30%) + 自费(10%)，交通费全自费
 function settle(o){ const ltc=Math.round(o.price*0.6), sub=Math.round(o.price*0.3); return {total:o.price+o.transport, ltc, sub, self:o.price+o.transport-ltc-sub}; }
@@ -241,6 +248,10 @@ function renderUser(){
         <div class="hero"><div class="big">苏康养<br>让专业照护走进千万家</div><div class="sub">家庭养老床位 · 示范服务</div></div>
         <div class="card"><div style="font-weight:700;color:var(--dark);margin-bottom:10px;">服务流程</div>
           <div class="flow"><span class="step">① 预约服务</span><span class="arrow">→</span><span class="step">② 填写信息</span><span class="arrow">→</span><span class="step">③ 完成支付</span><span class="arrow">→</span><span class="step">④ 平台确认</span><span class="arrow">→</span><span class="step">⑤ 护理员上门</span><span class="arrow">→</span><span class="step">⑥ 服务完成</span></div>
+        </div>
+        <div class="card" style="cursor:pointer;border-left:4px solid var(--primary);" onclick="S.page='apply';render()">
+          <div style="font-weight:700;color:var(--dark);">家床服务申请</div>
+          <div style="color:var(--muted);font-size:13px;margin-top:2px;">申请家庭养老床位，资格认定后可享补贴与长护险 ›</div>
         </div>
         <div style="font-weight:700;color:var(--dark);margin:6px 0 10px;">服务项目</div>
         ${S.services.map((s,i)=>`<div class="svc" onclick="pickService(${i})"><div class="thumb"></div><div><div class="t">${s.name}</div><div class="d">${s.desc}</div></div><div class="p">¥${s.price}<span style="font-size:12px;color:var(--muted);"> 起/次</span></div></div>`).join('')}
@@ -300,9 +311,31 @@ function renderUser(){
   else if(S.page==='orderDetail'){ renderOrderDetail(); }
   else if(S.page==='serviceDetail'){ renderServiceDetail('user'); }
   else if(S.page==='refundDetail'){ renderRefundDetail(); }
+  else if(S.page==='apply'){ renderApply(); }
 }
 
 function userLogin(){ if(!$('lg-phone').value.trim()){alert('请输入手机号');return;} S.user=true; S.page='home'; render(); }
+function renderApply(){
+  app().innerHTML=`<div class="phone"><div class="nav"><button class="back" onclick="S.page='home';render()">‹</button>家床申请</div>
+    <div class="body">
+      <div class="notice">家床（家庭养老床位）需通过资格认定，认定后可享政府补贴与长护险。</div>
+      <div class="card">
+        <div class="field"><label>老人姓名 <span style="color:var(--red);">*</span></label><input id="ap-name" placeholder="请输入老人姓名"></div>
+        <div class="field"><label>性别 / 年龄</label><div class="grid2"><select id="ap-gender"><option>女</option><option>男</option></select><input id="ap-age" type="number" placeholder="年龄"></div></div>
+        <div class="field"><label>家属 / 联系人</label><input id="ap-family" placeholder="如 陈伟（子）"></div>
+        <div class="field"><label>服务地址</label><input id="ap-addr" placeholder="小区 / 楼栋 / 门牌"></div>
+        <div class="field"><label>失能情况说明</label><textarea id="ap-desc" placeholder="简要描述老人身体状况（用于评估参考）"></textarea></div>
+        <button class="btn full" onclick="submitApplication()">提交申请</button>
+      </div>
+    </div>
+  </div>`;
+}
+function submitApplication(){
+  const name=$('ap-name').value.trim(); if(!name){ alert('请输入老人姓名'); return; }
+  S.applications.unshift({id:Date.now(),patient:name,family:$('ap-family').value||'—',addr:$('ap-addr').value||'—',status:'待审核',applyTime:new Date().toLocaleDateString('zh-CN')});
+  alert('家床申请已提交，等待平台审核');
+  S.page='profile'; render();
+}
 function pickService(i){ S.draft=JSON.parse(JSON.stringify(S.services[i])); S.page='booking'; render(); }
 function submitBooking(){
   S.draft.patient=$('bk-patient').value; S.draft.phone=$('bk-phone').value; S.draft.addr=$('bk-addr').value; S.draft.time=$('bk-time').value; S.draft.note=$('bk-note').value;
@@ -358,6 +391,7 @@ function renderOrderDetail(){
         <div class="row"><span class="k">支付方式</span><span class="v">${o.payMethod}</span></div>
       </div>
       <button class="btn line full" style="margin-bottom:10px;" onclick="S.cur=${o.id};S.page='serviceDetail';render()">查看服务详情</button>
+      ${o.status==='已完成'?`<button class="btn full" style="margin-bottom:10px;" onclick="S.cur=${o.id};openReview()">评价服务</button>`:''}
       ${o.status==='退款中'||o.status==='已退款'?`<button class="btn line full" onclick="S.cur=${o.id};S.page='refundDetail';render()">查看退款详情</button>`:''}
       ${canCancel?`<button class="btn gray full" style="margin-top:10px;" onclick="S.cur=${o.id};openCancel()">取消预约</button>`:''}
     </div>
@@ -426,6 +460,25 @@ function pickReason(r){ S.cancelReason=r; openReason(); }
 function confirmCancel(){
   if(!S.cancelReason){ alert('请选择取消原因'); return; }
   const o=order(); o.status='退款中'; closeOv(); S.page='refundDetail'; render();
+}
+let rvScore=5;
+function openReview(){
+  const o=order(); rvScore=5;
+  const tags=['服务专业','态度亲切','上门准时','记录规范','沟通顺畅'];
+  sheet('评价服务',
+    `<div style="text-align:center;font-weight:700;color:var(--dark);">${o.svc} · ${o.patient}</div>
+     <div id="rv-stars" style="text-align:center;margin:12px 0;">${[1,2,3,4,5].map(n=>`<span onclick="setScore(${n})" style="font-size:30px;color:var(--primary);cursor:pointer;">★</span>`).join('')}</div>
+     <div style="font-size:14px;color:var(--muted);margin-bottom:6px;">服务标签</div>
+     <div style="display:flex;flex-wrap:wrap;gap:12px;">${tags.map(t=>`<label style="font-size:13px;"><input type="checkbox" name="rv-tag" value="${t}"> ${t}</label>`).join('')}</div>
+     <textarea id="rv-text" placeholder="说说这次服务体验（可选）" style="width:100%;border:1px solid var(--border);border-radius:10px;padding:10px;margin-top:12px;min-height:70px;"></textarea>`,
+    `<button class="btn line" onclick="closeOv()">取消</button><button class="btn" onclick="submitReview()">提交评价</button>`);
+}
+function setScore(n){ rvScore=n; const box=$('rv-stars'); if(box) [].forEach.call(box.children,(s,i)=>s.style.color=i<n?'var(--primary)':'#d1d5db'); }
+function submitReview(){
+  const o=order();
+  const tags=[...document.querySelectorAll('input[name=rv-tag]:checked')].map(x=>x.value);
+  S.reviews.unshift({id:Date.now(),order:o.no,patient:o.patient,score:rvScore,tags,text:$('rv-text').value||'—',reply:''});
+  closeOv(); alert('感谢您的评价'); render();
 }
 function renderRefundDetail(){
   const o=order(); const t=new Date().toLocaleString('zh-CN');
@@ -593,13 +646,19 @@ const NURSES=[
   {name:'赵敏',  title:'护理员 · 从业 3 年', level:'中级'},
   {name:'周琳',  title:'护理员 · 从业 2 年', level:'初级'},
 ];
+const NAV=[
+  ['概览',[['dashboard','数据看板']]],
+  ['家床管理',[['applications','家床申请'],['patients','老人与评估'],['plans','照护计划']]],
+  ['服务运营',[['orders','订单管理'],['schedule','排班管理'],['settlement','补贴结算']]],
+  ['质量与合规',[['qc','服务质控'],['reviews','服务评价'],['nurses','护理员管理']]],
+  ['配置',[['services','服务项目与价格'],['refunds','退款审核'],['refundRules','退款规则配置']]],
+];
 function renderAdmin(){
   if(!S.adminPage) S.adminPage='dashboard';
-  const nav=[['dashboard','数据看板'],['patients','老人与评估'],['plans','照护计划'],['orders','订单管理'],['schedule','排班管理'],['settlement','补贴结算'],['qc','服务质控'],['nurses','护理员管理'],['services','服务项目与价格'],['refunds','退款审核'],['refundRules','退款规则配置']];
-  const render={dashboard:aDashboard,patients:aPatients,plans:aCarePlans,orders:aOrders,schedule:aSchedule,settlement:aSettlement,qc:aQc,nurses:aNurses,services:aServices,refunds:aRefunds,refundRules:aRefundRules}[S.adminPage];
+  const render={dashboard:aDashboard,applications:aApplications,patients:aPatients,plans:aCarePlans,orders:aOrders,schedule:aSchedule,settlement:aSettlement,qc:aQc,reviews:aReviews,nurses:aNurses,services:aServices,refunds:aRefunds,refundRules:aRefundRules}[S.adminPage];
   app().innerHTML=`<div style="display:flex;min-height:calc(100vh - 54px);">
-    <div style="width:190px;background:#fff;border-right:1px solid var(--border);padding:12px 0;flex:none;">
-      ${nav.map(([k,t])=>`<div style="padding:12px 20px;cursor:pointer;font-size:15px;border-left:3px solid ${S.adminPage===k?'var(--primary)':'transparent'};color:${S.adminPage===k?'var(--primary)':'var(--text)'};font-weight:${S.adminPage===k?'700':'400'};background:${S.adminPage===k?'#fff7f2':'transparent'}" onclick="S.adminPage='${k}';render()">${t}</div>`).join('')}
+    <div style="width:190px;background:#fff;border-right:1px solid var(--border);padding:10px 0;flex:none;">
+      ${NAV.map(([g,items])=>`<div style="padding:10px 20px 4px;font-size:12px;color:#9ca3af;">${g}</div>`+items.map(([k,t])=>`<div style="padding:10px 20px;cursor:pointer;font-size:15px;border-left:3px solid ${S.adminPage===k?'var(--primary)':'transparent'};color:${S.adminPage===k?'var(--primary)':'var(--text)'};font-weight:${S.adminPage===k?'700':'400'};background:${S.adminPage===k?'#fff7f2':'transparent'}" onclick="S.adminPage='${k}';render()">${t}</div>`).join('')).join('')}
     </div>
     <div style="flex:1;padding:22px;overflow:auto;">${render()}</div>
   </div>`;
@@ -837,6 +896,37 @@ function aSettlement(){
     `<div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:14px;">${stat('服务费合计','¥'+sum.t)}${stat('长护险支付','¥'+sum.l,'var(--green)')}${stat('政府补贴','¥'+sum.s,'var(--blue)')}${stat('自费','¥'+sum.f,'var(--dark)')}</div>`+
     adminTable(['订单编号','服务项目','老人','服务费','长护险','政府补贴','自费'],rows);
 }
+
+function aApplications(){
+  const rows=S.applications.map(a=>[a.patient,a.family,a.addr,a.applyTime,
+    a.status==='待审核'?'<span class="tag orange">待审核</span>':a.status==='已通过'?'<span class="tag green">已通过</span>':'<span class="tag red">已驳回</span>',
+    a.status==='待审核'?`<button class="wbtn sm" onclick="reviewApp(${a.id},1)">通过</button> <button class="wbtn line sm" onclick="reviewApp(${a.id},0)">驳回</button>`:'—']);
+  return h1('家床申请','家床资格认定，通过后享政府补贴与长护险 · 共 '+S.applications.length+' 条')+
+    adminTable(['老人','家属','服务地址','申请时间','状态','操作'],rows);
+}
+function reviewApp(id,ok){
+  const a=S.applications.find(x=>x.id===id);
+  a.status=ok?'已通过':'已驳回';
+  alert(ok?'已通过家床资格认定，已建档，可享补贴与长护险':'已驳回该申请');
+  render();
+}
+function aReviews(){
+  const list=S.reviews;
+  const avg=list.length?(list.reduce((s,r)=>s+r.score,0)/list.length).toFixed(1):'—';
+  const rows=list.map(r=>[r.order,r.patient,'★'.repeat(r.score)+'☆'.repeat(5-r.score),(r.tags||[]).join('、'),r.text,
+    r.reply?'<span class="tag green">已回访</span>':`<button class="wbtn sm" onclick="replyReview(${r.id})">回访</button>`]);
+  return h1('服务评价','家属评价与回访 · 平均 ' + avg + ' 分')+
+    adminTable(['订单编号','老人','评分','标签','评价','回访'],rows);
+}
+function replyReview(id){
+  const r=S.reviews.find(x=>x.id===id);
+  webModal('回访 · 订单 '+r.order,
+    `<div class="wrow"><span class="k">老人</span><span class="v">${r.patient}</span></div>
+     <div class="wrow"><span class="k">家属评价</span><span class="v">${r.text}</span></div>
+     <div class="wfield" style="margin-top:14px;"><label>回访记录</label><textarea id="rv-reply" placeholder="填写回访情况与处理结果" style="min-height:70px;"></textarea></div>`,
+    `<button class="wbtn line" onclick="closeOv()">取消</button><button class="wbtn" onclick="saveReply(${id})">保存</button>`);
+}
+function saveReply(id){ const r=S.reviews.find(x=>x.id===id); r.reply=$('rv-reply').value||'已回访'; closeOv(); render(); }
 
 setEnd('user');
 </script>
